@@ -1,0 +1,101 @@
+import React, { useState, useEffect } from 'react';
+import * as FileSaver from 'file-saver';
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+
+function TableProduct({ productData }) {
+  const [tableHeight, setTableHeight] = useState('auto');
+
+  useEffect(() => {
+    const numRows = productData.length;
+    const maxRowsToShow = 10;
+    const rowHeight = 40;
+
+    if (numRows > maxRowsToShow) {
+      setTableHeight(`${maxRowsToShow * rowHeight}px`);
+    } else {
+      setTableHeight('auto');
+    }
+  }, [productData]);
+
+  const cellStyle = {
+    border: '1px solid #ddd',
+    padding: '8px',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  };
+
+  const headerCellStyle = {
+    ...cellStyle,
+    fontWeight: 'bold',
+    backgroundColor: '#f3f3f3',
+  };
+
+  const exportToExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(productData);
+    const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
+    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const data = new Blob([excelBuffer], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'});
+    FileSaver.saveAs(data, 'productData.xlsx');
+  };
+
+  const exportToPDF = () => {
+    const input = document.getElementById('table-to-export');
+    html2canvas(input)
+      .then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF({ orientation: 'landscape' });
+        const imgWidth = 210; 
+        const imgHeight = canvas.height * imgWidth / canvas.width;
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+        pdf.save('productData.pdf');
+      });
+  };
+
+  return (
+    <div>
+      <h2 className="text-xl font-bold mb-2 py-2">Product Data</h2>
+      <div  className="flex justify-end mb-2">
+       
+        <div>
+          <button className="bg-emerald-400 text-white py-2 px-4 rounded-lg hover:bg-blue-600 mt-4" onClick={exportToExcel}>Export to Excel</button>
+        <button className="bg-emerald-400 text-white py-2 px-4 rounded-lg hover:bg-blue-600 mt-4" onClick={exportToPDF} style={{marginLeft: '10px'}}>Export to PDF</button>
+        </div>
+        
+      </div>
+      <div style={{ maxHeight: tableHeight, overflowY: 'auto' }}>
+        <table className="w-full" style={{ tableLayout: 'fixed' }} id="table-to-export">
+          <thead>
+            <tr>
+              <th style={{ ...headerCellStyle, width: '12%' }}>Mã Sản phẩm</th>
+              <th style={{ ...headerCellStyle, width: '8%' }}>Batch</th>
+              <th style={{ ...headerCellStyle, width: '12%' }}>Tên sản phẩm</th>
+              <th style={{ ...headerCellStyle, width: '12%' }}>Loại sản phẩm</th>
+              <th style={{ ...headerCellStyle, width: '12%' }}>Ca sản xuất</th>
+              <th style={{ ...headerCellStyle, width: '15%' }}>Ngày sản xuất</th>
+              <th style={{ ...headerCellStyle, width: '12%' }}>Nhân viên</th>
+
+          </tr>
+          </thead>
+        <tbody>
+            {productData.map((product, index) => (
+            <tr key={index} style={{ backgroundColor: index % 2 === 0 ? '#f9f9f9' : 'none' }}>
+            <td style={cellStyle}>{product.maSanpham}</td>
+            <td style={cellStyle}>{product.batch}</td>
+            <td style={cellStyle}>{product.tenSanPham}</td>
+            <td style={cellStyle}>{product.type}</td>
+            <td style={cellStyle}>{product.caSanXuat}</td>
+            <td style={cellStyle}>{product.ngaySanXuat}</td>
+            <td style={cellStyle}>{product.nhanvien}</td>
+            </tr>
+            ))}
+      </tbody>
+    </table>
+</div>
+</div>
+);
+}
+
+export default TableProduct;
