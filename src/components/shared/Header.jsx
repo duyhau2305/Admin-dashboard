@@ -7,13 +7,13 @@ import { useNavigate } from 'react-router-dom'
 function Header() {
 	const nagvigate =useNavigate();
   return (
-    <div className=" bg-neutral-100 h-16 px-4 flex justify-between items-center">
-        <div className="relative">
+    <div className=" bg-neutral-100 h-12 px-4 flex justify-end items-center">
+        {/* <div className="relative">
             <HiOutlineSearch fontSize={22} className="text-gray-400 absolute top-1/2 -translate-y-1/2 right-1 cursor-pointer"/>
             <input type="text" 
             placeholder="Search......" 
             className="text-sm focus:outline-none active:outline-none h-10 w-[24rem] border border-gray-300 rounded-sm px-4" />
-        </div>
+        </div> */}
         <div className="flex gap-2 items-center mr-2">
         <Popover className="relative">
 					{({ open }) => (
@@ -79,7 +79,7 @@ function Header() {
 					<div className="inline-flex">
 						<Menu.Button className="ml-2 inline-flex rounded-full focus:outline-none focus:ring-2 focus:ring-neutral-400">
 								<span className="sr-only">Open user</span>
-								<div className = "h-10 w-10 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" >
+								<div className = "h-6 w-6 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" >
 									<span className="sr-only">Huge Kacok</span>
 								</div>
 						</Menu.Button>

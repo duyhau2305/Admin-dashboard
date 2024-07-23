@@ -7,67 +7,94 @@ import {
 	HiOutlineAnnotation,
 	HiOutlineQuestionMarkCircle,
 	HiOutlineCog,
-	HiMenu
-    
-} from 'react-icons/hi'
+	HiMenu,
 
-export const DASHBOARD_SIDEBAR_LINKS = [
+  } from 'react-icons/hi'
+  
+  export const DASHBOARD_SIDEBAR_LINKS = [
 	{
-		key: 'dashboard',
-		label: 'Dashboard',
-		path: '/',
-		icon: <HiOutlineViewGrid />
+	  key: 'dashboard',
+	  label: 'Trang chủ',
+	  path: '/',
+	  icon: <HiOutlineViewGrid />,
+	  subMenu: []
 	},
 	{
-		key: 'products',
-		label: 'Products',
-		path: '/products',
-		icon: <HiOutlineCube />
+	  key: 'products',
+	  label: 'Sản xuất',
+	  path: '/products',
+	  icon: <HiOutlineCube />,
+	  subMenu: [
+		{ key: 'lenhsanxuat', label: 'Lệnh sản xuất', path: '/products',
+			
+		 },
+		{ key: 'LinhNL', label: 'Kiểm tra NL', path: '/products/product2' ,
+		},
+		{ key: 'Baocaoca', label: 'Báo cáo ca', path: '/products/product2' ,
+		}
+	  ]
 	},
 	{
-		key: 'qctool',
-		label: 'QC Tool',
-		path: '/qctool',
-		icon: <HiDesktopComputer />
+	  key: 'qatool',
+	  label: 'QA ',
+	  path: '/qatool',
+	  icon: <HiDesktopComputer />,
+	  subMenu: [
+		{ key: 'DanhMucNL', label: 'Danh Mục NL', path: '/products/product2' ,
+		},
+		{ key: 'Nlthaythe', label: 'NL Thay Thế', path: '/products/product2' ,
+		},
+		{ key: 'SodangkyNl', label: 'Số đăng ký', path: '/products/product2' ,
+		},
+		{ key: 'PhieukiemnghiemNL', label: 'Phiếu kiểm nghiệm', path: '/products/product2' ,
+		}
+	  
+	  ]
 	},
 	{
-		key: 'qcreport',
-		label: 'QC Report',
-		path: '/qcreport',
-		icon: <HiOutlineDocumentReport />
+	  key: 'qcreport',
+	  label: 'QC ',
+	  path: '/qcreport',
+	  icon: <HiOutlineDocumentReport />,
+	  subMenu: []
 	},
 	{
-		key: 'standard',
-		label: 'Standard ',
-		path: '/standard',
-		icon: <HiOutlineDocumentText />
+	  key: 'standard',
+	  label: 'Chấm công ',
+	  path: '/standard',
+	  icon: <HiOutlineDocumentText />,
+	  subMenu: []
 	},
 	{
-		key: 'messages',
-		label: 'Messages',
-		path: '/messages',
-		icon: <HiOutlineAnnotation />
+	  key: 'messages',
+	  label: 'Tin tức nội bộ',
+	  path: '/messages',
+	  icon: <HiOutlineAnnotation />,
+	  subMenu: []
 	}
-]
-
-export const DASHBOARD_SIDEBAR_BOTTOM_LINKS = [
+  ]
+  
+  export const DASHBOARD_SIDEBAR_BOTTOM_LINKS = [
 	{
-		key: 'settings',
-		label: 'Settings',
-		path: '/settings',
-		icon: <HiOutlineCog />
+	  key: 'settings',
+	  label: 'Cài Đặt',
+	  path: '/settings',
+	  icon: <HiOutlineCog />,
+	  subMenu: []
 	},
 	{
-		key: 'support',
-		label: 'Help & Support',
-		path: '/support',
-		icon: <HiOutlineQuestionMarkCircle />
+	  key: 'support',
+	  label: 'Hỗ trợ',
+	  path: '/support',
+	  icon: <HiOutlineQuestionMarkCircle />,
+	  subMenu: []
 	},
 	{
-		key: 'profile',
-		label: 'Profile',
-		path: '/profile',
-		icon: <HiMenu />
+	  key: 'profile',
+	  label: 'Thông tin cá nhân',
+	  path: '/profile',
+	  icon: <HiMenu />,
+	  subMenu: []
 	}
-    
-]
+  ]
+  

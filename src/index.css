@@ -22,7 +22,7 @@
 		@apply font-semibold;
 	}
 	a {
-		@apply text-sky-500 hover:underline;
+		/* @apply text-sky-500 hover:underline; */
 	}
 	.animate-blob {
 		animation: blob 7s infinite;

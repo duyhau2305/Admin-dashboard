@@ -11,6 +11,7 @@ import MessagePage from '../pages/Message';
 import Settings from '../pages/Settings';
 import HelpAndSupport from '../pages/Support/HelpAndSupport';
 import Profile from '../pages/Profile';
+import Product2 from '../Product2';
 
 function Layout() {
   const location = useLocation();
@@ -24,8 +25,10 @@ function Layout() {
     switch (location.pathname) {
       case '/products':
         return <ProductPage searchQuery={searchQuery} />;
-      case '/qctool':
+      case '/qatool':
         return <QCTool searchQuery={searchQuery} />;
+        case '/products/product2':
+          return <Product2 searchQuery={searchQuery} />;  
       case '/qcreport':
         return <QCReport searchQuery={searchQuery} />;
       case '/standard':
