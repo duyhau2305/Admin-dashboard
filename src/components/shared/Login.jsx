@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaUserAlt, FaLock, FaFacebook, FaTwitter, FaGoogle } from 'react-icons/fa'; // Make sure to install react-icons
+import { FaUserAlt, FaLock, FaUsers, FaBook } from 'react-icons/fa'; // Added icons for support and documentation
 
 function Login() {
   const navigate = useNavigate();
@@ -44,7 +44,7 @@ function Login() {
             Sign in
           </button>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-center space-x-12">
             <label htmlFor="remember-me" className="flex items-center text-gray-600">
               <input id="remember-me" type="checkbox" className="text-blue-600 border-gray-300 rounded focus:ring-blue-500"/>
               <span className="ml-2 text-sm">Remember me</span>
@@ -54,15 +54,14 @@ function Login() {
           </div>
         </form>
 
-        <div className="flex items-center justify-center space-x-4">
-          <a href="#" className="text-blue-600 hover:text-blue-700">
-            <FaFacebook className="w-6 h-6"/>
+        <div className="flex items-center justify-center space-x-10">
+          <a href="#" className="flex items-center text-blue-600 hover:underline">
+            <FaUsers className="mr-2" />
+            Nhóm hỗ trợ
           </a>
-          <a href="#" className="text-blue-600 hover:text-blue-700">
-            <FaTwitter className="w-6 h-6"/>
-          </a>
-          <a href="#" className="text-blue-600 hover:text-blue-700">
-            <FaGoogle className="w-6 h-6"/>
+          <a href="#" className="flex items-center text-blue-600 hover:underline">
+            <FaBook className="mr-2" />
+            Tài liệu hướng dẫn
           </a>
         </div>
       </div>

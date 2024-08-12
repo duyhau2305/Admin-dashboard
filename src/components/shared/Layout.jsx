@@ -4,14 +4,54 @@ import Siderbar from './Siderbar';
 import Header from './Header';
 import ProductPage from '../ProductPage';
 import Dashboard from '../Dashboard';
-import QCTool from '../pages/QC Tool/QCTool';
-import QCReport from '../pages/QCReport';
-import Standard from '../pages/Standard';
-import MessagePage from '../pages/Message';
+import MessagePage from '../pages/News';
 import Settings from '../pages/Settings';
 import HelpAndSupport from '../pages/Support/HelpAndSupport';
 import Profile from '../pages/Profile';
 import Product2 from '../Product2';
+import Timsheets from '../pages/Timsheets';
+import UserList from '../Userlist';
+import MaterialsCatalog from '../MaterialsCatalog';
+import Product3 from '../Product3';
+import SubstituteMaterialTable from '../SubstituteMaterialTable';
+import RegistrationTable from '../RegistrationTable';
+import InspectionSheet from '../InspectionSheet';
+import WorkRegistration from '../WorkRegistration';
+import OvertimeRegistration from '../pages/works/Timextra';
+import ManageNews from '../pages/Admin/ManageNews';
+import HelpAndSupportManagement from '../pages/Support/HelpAndSupportManagement';
+
+// import QCTool from '../pages/QC Tool/QCTool';
+import PhuLieuPage from '../pages/QC Tool/PhuLieuPage';
+
+
+
+const routeComponents = {
+  '/products': ProductPage,
+  '/qa': MaterialsCatalog,
+  '/qa/danhmucnguyenlieu': MaterialsCatalog,
+  '/qa/nguyenlieuthaythe': SubstituteMaterialTable,
+  '/qa/phieukiemnghiemnguyenlieu': InspectionSheet,
+  '/qa/sodangky': RegistrationTable,
+  '/products/product2': Product2,
+  '/products/product3': Product3,
+  '/qc': MaterialsCatalog,
+  '/qc/qlpl': PhuLieuPage,
+  
+  '/timesheets': Timsheets,
+  '/timesheets/timesheet': Timsheets,
+  '/timesheets/dangkylamviec': WorkRegistration,
+  '/timesheets/dangkythemgio': OvertimeRegistration,
+  '/messages': MessagePage,
+  '/admin': UserList,
+  '/admin/userlist': UserList,
+  '/admin/managenews': ManageNews,
+  '/admin/managehelpandsupport': HelpAndSupportManagement,
+
+  '/settings': Settings,
+  '/support': HelpAndSupport,
+  '/profile': Profile,
+};
 
 function Layout() {
   const location = useLocation();
@@ -22,36 +62,16 @@ function Layout() {
   };
 
   const renderContent = () => {
-    switch (location.pathname) {
-      case '/products':
-        return <ProductPage searchQuery={searchQuery} />;
-      case '/qatool':
-        return <QCTool searchQuery={searchQuery} />;
-        case '/products/product2':
-          return <Product2 searchQuery={searchQuery} />;  
-      case '/qcreport':
-        return <QCReport searchQuery={searchQuery} />;
-      case '/standard':
-        return <Standard searchQuery={searchQuery} />;
-      case '/messages':
-        return <MessagePage searchQuery={searchQuery} />;
-      case '/settings':
-        return <Settings searchQuery={searchQuery} />;
-      case '/support':
-        return <HelpAndSupport searchQuery={searchQuery} />;
-      case '/profile':
-        return <Profile searchQuery={searchQuery} />;
-      default:
-        return <Dashboard searchQuery={searchQuery} />;
-    }
+    const Component = routeComponents[location.pathname] || Dashboard;
+    return <Component searchQuery={searchQuery} />;
   };
 
   return (
-    <div className="flex flex-row bg-neutral-400 h-screen w-screen">
+    <div className="flex h-screen w-screen">
       <Siderbar />
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col ">
         <Header searchQuery={searchQuery} handleSearchChange={handleSearchChange} />
-        <div className="p-4 bg-neutral-200 flex-1 overflow-y-auto">
+        <div className="p-2 bg-neutral-200 flex-1 overflow-y-auto">
           {renderContent()}
         </div>
       </div>

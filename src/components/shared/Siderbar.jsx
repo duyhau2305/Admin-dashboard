@@ -9,7 +9,7 @@ function Sidebar() {
     const navigate = useNavigate();
 
     return (
-        <div className="flex bg-neutral-800 flex-col w-64 h-screen p-2 text-white overflow-y-auto">
+        <div className="flex bg-neutral-800 flex-col w-66 h-screen p-2 text-white overflow-y-auto flex-shrink: 0">
             <div className="flex gap-2 items-center px-2 py-2">
                 <FcBiotech fontSize={22} />
                 <span className="text-neutral-100 text-lg px-8">Win Pharma</span>

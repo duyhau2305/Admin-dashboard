@@ -28,7 +28,7 @@ const HelpAndSupport = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">Help and Support</h1>
+      <h1 className="text-3xl font-bold mb-4">Yêu cầu hỗ trợ</h1>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="issue">
