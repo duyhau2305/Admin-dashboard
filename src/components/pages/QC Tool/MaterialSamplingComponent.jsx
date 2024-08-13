@@ -64,46 +64,48 @@ const MaterialSamplingComponent = () => {
           <button className="bg-yellow-500 text-white px-3 py-1 rounded-md text-xs">Export to Excel</button>
         </div>
       </div>
-      <table className="w-full border-collapse text-xs">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="border px-1 py-1 text-xs">No</th>
-            <th className="border whitespace-nowrap px-1 py-1 text-xs">Entry Date</th>
-            <th className="border whitespace-nowrap px-1 py-1 text-xs">Entered By</th>
-            <th className="border px-1 whitespace-nowrap py-1 text-xs">Status</th>
-            <th className="border px-1 whitespace-nowrap py-1 text-xs">Material Type</th>
-            <th className="border px-1 whitespace-nowrap py-1 text-xs">Lot Number</th>
-            <th className="border px-1 whitespace-nowrap py-1 text-xs">K Number</th>
-            <th className="border px-1 whitespace-nowrap py-1 text-xs">Weight</th>
-            <th className="border px-1 whitespace-nowrap py-1 text-xs">Packaging</th>
-            <th className="border px-1 whitespace-nowrap py-1 text-xs">Production Date</th>
-            <th className="border px-1 whitespace-nowrap py-1 text-xs">Expiry Date</th>
-            <th className="border px-1 whitespace-nowrap py-1 text-xs">Manufacturer</th>
-            <th className="border px-1 whitespace-nowrap py-1 text-xs">Supplier</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sampleData.map((item) => (
-            <tr key={item.id}>
-              <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.id}</td>
-              <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.entryDate}</td>
-              <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.enteredBy}</td>
-              <td className={`border px-1 py-1 text-xs whitespace-nowrap ${item.status === 'Pending Sample' ? 'text-orange-600' : 'text-green-600'}`}>
-                {item.status}
-              </td>
-              <td className="border px-1 py-1 text-xs whitespace-nowrap truncate max-w-xs">{item.materialType}</td>
-              <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.lotNumber}</td>
-              <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.kNumber}</td>
-              <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.weight}</td>
-              <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.packaging}</td>
-              <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.productionDate}</td>
-              <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.expiryDate}</td>
-              <td className="border px-1 py-1 text-xs whitespace-nowrap truncate max-w-xs">{item.manufacturer}</td>
-              <td className="border px-1 py-1 text-xs whitespace-nowrap truncate max-w-xs">{item.supplier}</td>
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse text-xs">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="border px-1 py-1 text-xs">No</th>
+              <th className="border whitespace-nowrap px-1 py-1 text-xs">Entry Date</th>
+              <th className="border whitespace-nowrap px-1 py-1 text-xs">Entered By</th>
+              <th className="border px-1 whitespace-nowrap py-1 text-xs">Status</th>
+              <th className="border px-1 whitespace-nowrap py-1 text-xs">Material Type</th>
+              <th className="border px-1 whitespace-nowrap py-1 text-xs">Lot Number</th>
+              <th className="border px-1 whitespace-nowrap py-1 text-xs">K Number</th>
+              <th className="border px-1 whitespace-nowrap py-1 text-xs">Weight</th>
+              <th className="border px-1 whitespace-nowrap py-1 text-xs">Packaging</th>
+              <th className="border px-1 whitespace-nowrap py-1 text-xs">Production Date</th>
+              <th className="border px-1 whitespace-nowrap py-1 text-xs">Expiry Date</th>
+              <th className="border px-1 whitespace-nowrap py-1 text-xs">Manufacturer</th>
+              <th className="border px-1 whitespace-nowrap py-1 text-xs">Supplier</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {sampleData.map((item) => (
+              <tr key={item.id}>
+                <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.id}</td>
+                <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.entryDate}</td>
+                <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.enteredBy}</td>
+                <td className={`border px-1 py-1 text-xs whitespace-nowrap ${item.status === 'Pending Sample' ? 'text-orange-600' : 'text-green-600'}`}>
+                  {item.status}
+                </td>
+                <td className="border px-1 py-1 text-xs whitespace-nowrap truncate max-w-xs">{item.materialType}</td>
+                <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.lotNumber}</td>
+                <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.kNumber}</td>
+                <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.weight}</td>
+                <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.packaging}</td>
+                <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.productionDate}</td>
+                <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.expiryDate}</td>
+                <td className="border px-1 py-1 text-xs whitespace-nowrap truncate max-w-xs">{item.manufacturer}</td>
+                <td className="border px-1 py-1 text-xs whitespace-nowrap truncate max-w-xs">{item.supplier}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

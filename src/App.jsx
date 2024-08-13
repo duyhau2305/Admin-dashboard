@@ -21,6 +21,7 @@ import News from './components/pages/News';
 import HelpAndSupportManagement from './components/pages/Support/HelpAndSupportManagement';
 import PhuLieuCatalog from './components/pages/QC Tool/PhuLieuPage';
 import SamplingComponent from './components/pages/QC Tool/SamplingComponent';
+import ResultPhuLieu from './components/pages/QC Tool/ResultPhuLieu';
 
 function App() {
   return (
@@ -57,7 +58,7 @@ function App() {
             <Route path="qlpl" element={<PhuLieuCatalog />}>
               <Route path="dmpl" element={<PhuLieuCatalog />} />
               <Route path="maupl" element={<SamplingComponent />} />
-              <Route path="phieukiemnghiem" element={<SamplingComponent />} />
+              <Route path="phieukiemnghiem" element={<ResultPhuLieu />} />
             </Route>
             <Route path="qlnl" element={<MaterialsCatalog />}>
               <Route path="dmnl" element={<MaterialsCatalog />} />
