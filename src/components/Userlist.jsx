@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaEye, FaEdit, FaTrash, FaLock, FaUnlock, FaPlus } from 'react-icons/fa';
 
+
 const UserList = () => {
   const [users, setUsers] = useState([]);
   const [isCreating, setIsCreating] = useState(false);
@@ -166,6 +167,7 @@ const UserList = () => {
         </tbody>
       </table>
     </div>
+    
   );
 };
 

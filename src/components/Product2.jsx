@@ -71,13 +71,13 @@ const MaterialList = () => {
               <tbody>
                 {day.items.map((material) => (
                   <tr key={material.id} className="border-b border-gray-200">
-                    <td className="py-2 px-4">{material.id}</td>
-                    <td className="py-2 px-4">{material.name}</td>
-                    <td className="py-2 px-4">{material.unit}</td>
-                    <td className="py-2 px-4">{material.manufacturer}</td>
-                    <td className="py-2 px-4">{material.quantityRequirement}</td>
-                    <td className="py-2 px-4">{material.quantity}</td>
-                    <td className="py-2 px-4 flex space-x-2">
+                    <td className="py-2 px-4 text-xs">{material.id}</td>
+                    <td className="py-2 px-4 text-xs">{material.name}</td>
+                    <td className="py-2 px-4 text-xs">{material.unit}</td>
+                    <td className="py-2 px-4 text-xs">{material.manufacturer}</td>
+                    <td className="py-2 px-4 text-xs">{material.quantityRequirement}</td>
+                    <td className="py-2 px-4 text-xs">{material.quantity}</td>
+                    <td className="py-2 px-4 text-xs flex space-x-2">
                       <button
                         onClick={() => handleConfirm(material.id)}
                         className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"

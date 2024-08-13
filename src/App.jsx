@@ -20,6 +20,8 @@ import WorkRegistration from './components/WorkRegistration';
 import OvertimeRegistration from './components/pages/works/Timextra';
 import News from './components/pages/News';
 import HelpAndSupportManagement from './components/pages/Support/HelpAndSupportManagement';
+import PhuLieuCatalog from './components/pages/QC Tool/PhuLieuPage';
+import SamplingComponent from './components/pages/QC Tool/SamplingComponent';
 
 function App() {
   return (
@@ -46,9 +48,19 @@ function App() {
          
           <Route path="qc" element={<MaterialsCatalog />}>
             <Route index element={<MaterialsCatalog />} />
-            <Route path="qlpl" element={<UserList />} />
+            <Route path="qlpl" element={<PhuLieuCatalog />}>
+              <Route path="dmpl" element={<PhuLieuCatalog />} /> {/* Thêm path con mới */}
+              <Route path="maupl" element={<SamplingComponent />} /> 
+              <Route path="phieukiemnghiem" element={<SamplingComponent />} /> 
+            </Route>
+            <Route path="qlnl" element={<MaterialsCatalog/>}>
+              <Route path="dmpl" element={<MaterialsCatalog />} /> {/* Thêm path con mới */}
+              <Route path="maupl" element={<SamplingComponent />} /> 
+              <Route path="phieukiemnghiem" element={<SamplingComponent />} /> 
+            </Route>
             <Route path="*" element={<Outlet />} /> {/* Render các route con ở đây */}
           </Route>
+
           <Route path="admin" element={<UserList />}>
             <Route index element={<ProductPage />} />
             <Route path="userlist" element={<UserList />} />

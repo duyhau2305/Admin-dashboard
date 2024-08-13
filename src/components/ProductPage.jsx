@@ -79,13 +79,15 @@ const ProductionOrders = () => {
           <FaPlus className="mr-2" /> Thêm mới
         </button>
       </div>
-      <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+      <div className="p-4 bg-neutral-200 flex-1 overflow-y-auto">
+        <div className="overflow-x-auto">
+        <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
         <thead>
           <tr className="bg-gray-100 border-b border-gray-300">
             <th className="py-3 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider whitespace-nowrap">STT</th>
             <th className="py-3 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider whitespace-nowrap">Lệnh SX</th>
             <th className="py-3 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider whitespace-nowrap">Lô</th>
-            <th className="py-3 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider whitespace-nowrap">Sản phẩm</th>
+            <th className="py-3 px-8 text-left text-xs font-medium text-gray-700 uppercase tracking-wider whitespace-nowrap">Sản phẩm</th>
             <th className="py-3 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider whitespace-nowrap">Dạng bào chế</th>
             <th className="py-3 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider whitespace-nowrap">SL in mã</th>
             <th className="py-3 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider whitespace-nowrap">Hộp trung gian</th>
@@ -101,19 +103,19 @@ const ProductionOrders = () => {
         <tbody>
           {orders.map((order, index) => (
             <tr key={order.id} className="border-b border-gray-200 hover:bg-gray-50 transition duration-150 ease-in-out">
-              <td className="py-3 px-4 text-sm">{index + 1}</td>
-              <td className="py-3 px-4 text-sm">{order.orderCode}</td>
-              <td className="py-3 px-4 text-sm">{order.batch}</td>
-              <td className="py-3 px-4 text-sm">{order.productCode}</td>
-              <td className="py-3 px-4 text-sm">{order.dosageForm}</td>
-              <td className="py-3 px-4 text-sm">{order.printedQty}</td>
-              <td className="py-3 px-4 text-sm">{order.intermediateBox}</td>
-              <td className="py-3 px-4 text-sm">{order.SL1}</td>
-              <td className="py-3 px-4 text-sm">{order.DV1}</td>
-              <td className="py-3 px-4 text-sm">{order.SL2}</td>
-              <td className="py-3 px-4 text-sm">{order.DV2}</td>
-              <td className="py-3 px-4 text-sm">{order.specification}</td>
-              <td className="py-3 px-4 text-sm">{order.type}</td>
+              <td className="py-3 px-4 text-xs">{index + 1}</td>
+              <td className="py-3 px-4 text-xs">{order.orderCode}</td>
+              <td className="py-3 px-4 text-xs">{order.batch}</td>
+              <td className="py-3 px-4 text-xs">{order.productCode}</td>
+              <td className="py-3 px-4 text-xs">{order.dosageForm}</td>
+              <td className="py-3 px-4 text-xs">{order.printedQty}</td>
+              <td className="py-3 px-4 text-xs">{order.intermediateBox}</td>
+              <td className="py-3 px-4 text-xs">{order.SL1}</td>
+              <td className="py-3 px-4 text-xs">{order.DV1}</td>
+              <td className="py-3 px-4 text-xs">{order.SL2}</td>
+              <td className="py-3 px-4 text-xs">{order.DV2}</td>
+              <td className="py-3 px-4 text-xs">{order.specification}</td>
+              <td className="py-3 px-4 text-xs">{order.type}</td>
               <td className="py-3 px-4 text-center">
                 <button
                   className="text-green-600 hover:text-green-800 mx-2"
@@ -134,6 +136,11 @@ const ProductionOrders = () => {
           ))}
         </tbody>
       </table>
+
+        </div>
+
+      </div>
+      
 
       {isModalOpen && (
   <div className="fixed inset-0 flex items-center w-full justify-center z-50 bg-black bg-opacity-50">

@@ -42,7 +42,7 @@ const PhuLieuCatalog = () => {
         <input
           type="text"
           placeholder="Phụ liệu | NCode"
-          className="border p-2 rounded-md flex-grow"
+          className="border px-4 py-2 rounded-md "
         />
         <button className="bg-blue-500 text-white px-4 py-2 rounded-md">Tìm kiếm</button>
         <button className="bg-green-500 text-white px-4 py-2 rounded-md">Thêm mới</button>
@@ -56,16 +56,16 @@ const PhuLieuCatalog = () => {
       <table className="min-w-full bg-white border border-gray-200">
         <thead>
           <tr className="bg-gray-100">
-            <th className="border px-4 py-2">STT</th>
-            <th className="border px-4 py-2">Trạng thái</th>
-            <th className="border px-4 py-2">NCode</th>
-            <th className="border px-4 py-2">Gửi mẫu ngoài</th>
-            <th className="border px-4 py-2">Phụ liệu</th>
-            <th className="border px-4 py-2">Loại</th>
-            <th className="border px-4 py-2">ĐVT</th>
-            <th className="border px-4 py-2">Nhà SX</th>
-            <th className="border px-4 py-2">Quốc gia</th>
-            <th className="border px-4 py-2">COA</th>
+            <th className="border px-4 py-2 text-xs">STT</th>
+            <th className="border px-4 py-2 text-xs">Trạng thái</th>
+            <th className="border px-4 py-2 text-xs">NCode</th>
+            <th className="border px-4 py-2 text-xs">Gửi mẫu ngoài</th>
+            <th className="border px-4 py-2 text-xs">Phụ liệu</th>
+            <th className="border px-4 py-2 text-xs">Loại</th>
+            <th className="border px-4 py-2 text-xs">ĐVT</th>
+            <th className="border px-4 py-2 text-xs">Nhà SX</th>
+            <th className="border px-4 py-2 text-xs">Quốc gia</th>
+            <th className="border px-4 py-2 text-xs">COA</th>
           </tr>
         </thead>
         <tbody>

@@ -52,7 +52,7 @@ const MaterialsCatalog = () => {
         <input
           type="text"
           placeholder="Nguyên liệu | NCode"
-          className="border p-2 rounded-md flex-grow"
+          className="border p-2 rounded-md "
         />
         <button className="bg-blue-500 text-white px-4 py-2 rounded-md">Tìm kiếm</button>
         <button className="bg-green-500 text-white px-4 py-2 rounded-md">Thêm mới</button>
