@@ -24,6 +24,7 @@ import HelpAndSupportManagement from '../pages/Support/HelpAndSupportManagement'
 // import QCTool from '../pages/QC Tool/QCTool';
 import PhuLieuPage from '../pages/QC Tool/PhuLieuPage';
 import SamplingComponent from '../pages/QC Tool/SamplingComponent';
+import MaterialSamplingComponent from '../pages/QC Tool/MaterialSamplingComponent';
 
 
 
@@ -42,7 +43,8 @@ const routeComponents = {
   '/qc/qlpl/maupl': SamplingComponent,
   '/qc/qlpl/phieukiemnghiem': SamplingComponent,
   '/qc/qlnl': MaterialsCatalog,
-  
+  '/qc/qlnl/dmnl': MaterialsCatalog,  
+  '/qc/qlnl/maunl': MaterialSamplingComponent,  
   '/timesheets': Timsheets,
   '/timesheets/timesheet': Timsheets,
   '/timesheets/dangkylamviec': WorkRegistration,

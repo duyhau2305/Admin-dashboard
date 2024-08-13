@@ -72,7 +72,7 @@ import {
 			subMenu: [
 				{ key: 'dmnl', label: 'Danh mục NL', path: '/qc/qlnl/dmnl',
 				},
-				{ key: 'maunl', label: 'Lấy mẫu NL', path: '/qc/qlpl/maunl',
+				{ key: 'maunl', label: 'Lấy mẫu NL', path: '/qc/qlnl/maunl',
 				},
 				{ key: 'phieukiemnghiem', label: 'Phiếu kiểm nghiệm', path: '/qc/qlnl/phieukiemnghiem',
 				},
@@ -82,9 +82,9 @@ import {
 			subMenu: [
 				{ key: 'dmhc', label: 'Danh mục HC', path: '/qc/qlhc/dmhc',
 				},
-				{ key: 'mauhc', label: 'Lấy mẫu HC', path: '/qc/qlhc/mauhc',
+				{ key: 'nhaphc', label: 'Nhập HC', path: '/qc/qlhc/nhaphc',
 				},
-				{ key: 'phieukiemnghiem', label: 'Phiếu kiểm nghiệm', path: '/qc/qlnl/phieukiemnghiem',
+				{ key: 'xuathc', label: 'Xuất HC', path: '/qc/qlnl/xuathc',
 				},
 		   ]
 		},

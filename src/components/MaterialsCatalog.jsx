@@ -109,8 +109,9 @@ const MaterialsCatalog = () => {
         <button className="px-4 py-2 border">387</button>
         <button className="px-4 py-2 border">&raquo;</button>
       </div>
-
+      
     </div>
+    
   );
 };
 
