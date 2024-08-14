@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ResultPhuLieu = () => {
+const ResultNguyenLieu = () => {
   const fakeData = [
     {
       id: 1,
@@ -43,18 +43,18 @@ const ResultPhuLieu = () => {
             <th className="border px-1 py-1 text-xs">STT</th>
             <th className="border whitespace-nowrap px-1 py-1 text-xs">Trạng thái</th>
             <th className="border whitespace-nowrap px-1 py-1 text-xs">Số K</th>
-            <th className="border px-1 whitespace-nowrap py-1 text-xs">Phụ liệu</th>
-            <th className="border px-1 whitespace-nowrap py-1 text-xs">Số lô</th>
-            <th className="border px-1 whitespace-nowrap py-1 text-xs">Ngày sản xuất</th>
-            <th className="border px-1 whitespace-nowrap py-1 text-xs">Hạn dùng</th>
-            <th className="border px-1 whitespace-nowrap py-1 text-xs">Lượng lấy</th>
-            <th className="border px-1 whitespace-nowrap py-1 text-xs">Tình trạng mẫu</th>
-            <th className="border px-1 whitespace-nowrap py-1 text-xs">file</th>
-            <th className="border px-1 whitespace-nowrap py-1 text-xs">Ngày trả KQ</th>
-            <th className="border px-1 whitespace-nowrap py-1 text-xs">Nơi lấy mẫu</th>
-            <th className="border px-1 whitespace-nowrap py-1 text-xs">Người lấy</th>
-            <th className="border px-1 whitespace-nowrap py-1 text-xs">Ngày lấy</th>
-            <th className="border px-1 whitespace-nowrap py-1 text-xs">Action</th>
+            <th className="border px-2 whitespace-nowrap py-1 text-xs">Nguyên liệu</th>
+            <th className="border px-2 whitespace-nowrap py-1 text-xs">Số lô</th>
+            <th className="border px-2 whitespace-nowrap py-1 text-xs">Ngày sản xuất</th>
+            <th className="border px-2 whitespace-nowrap py-1 text-xs">Hạn dùng</th>
+            <th className="border px-2 whitespace-nowrap py-1 text-xs">Lượng lấy</th>
+            <th className="border px-2 whitespace-nowrap py-1 text-xs">Tình trạng mẫu</th>
+            <th className="border px-2 whitespace-nowrap py-1 text-xs">file</th>
+            <th className="border px-2 whitespace-nowrap py-1 text-xs">Ngày trả KQ</th>
+            <th className="border px-2 whitespace-nowrap py-1 text-xs">Nơi lấy mẫu</th>
+            <th className="border px-2 whitespace-nowrap py-1 text-xs">Người lấy</th>
+            <th className="border px-2 whitespace-nowrap py-1 text-xs">Ngày lấy</th>
+            <th className="border px-2 whitespace-nowrap py-1 text-xs">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -86,4 +86,4 @@ const ResultPhuLieu = () => {
   );
 };
 
-export default ResultPhuLieu;
+export default ResultNguyenLieu;

@@ -14,7 +14,7 @@ import UserList from './components/Userlist';
 import MaterialsCatalog from './components/MaterialsCatalog';
 import SubstituteMaterialTable from './components/SubstituteMaterialTable';
 import RegistrationTable from './components/RegistrationTable';
-import InspectionSheet from './components/InspectionSheet';
+import InspectionSheet from './components/pages/QC Tool/InspectionSheet';
 import WorkRegistration from './components/WorkRegistration';
 import OvertimeRegistration from './components/pages/works/Timextra';
 import News from './components/pages/News';
@@ -22,6 +22,10 @@ import HelpAndSupportManagement from './components/pages/Support/HelpAndSupportM
 import PhuLieuCatalog from './components/pages/QC Tool/PhuLieuPage';
 import SamplingComponent from './components/pages/QC Tool/SamplingComponent';
 import ResultPhuLieu from './components/pages/QC Tool/ResultPhuLieu';
+import ChemicalTable from './components/pages/QC Tool/HC/ChemicalTable';
+import ChemicalEntry from './components/pages/QC Tool/HC/ChemicalEntry';
+import ExportChemical from './components/pages/QC Tool/HC/ExportChemical';
+import ProductList from './components/pages/QC Tool/TP/ProductList';
 
 function App() {
   return (
@@ -64,6 +68,16 @@ function App() {
               <Route path="dmnl" element={<MaterialsCatalog />} />
               <Route path="maupl" element={<SamplingComponent />} />
               <Route path="phieukiemnghiem" element={<SamplingComponent />} />
+            </Route>
+            <Route path="qlhc" element={<ChemicalTable />}>
+              <Route path="dmhc" element={<ChemicalTable />} />
+              <Route path="nhaphc" element={<ChemicalEntry />} />
+              <Route path="xuathc" element={<ExportChemical />} />
+            </Route>
+            <Route path="qltp" element={<ProductList />}>
+              <Route path="dmtp" element={<ProductList />} />
+              <Route path="mautp" element={<ChemicalEntry />} />
+              <Route path="xuathc" element={<ExportChemical />} />
             </Route>
             <Route path="*" element={<Outlet />} />
           </Route>

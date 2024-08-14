@@ -84,7 +84,7 @@ import {
 				},
 				{ key: 'nhaphc', label: 'Nhập HC', path: '/qc/qlhc/nhaphc',
 				},
-				{ key: 'xuathc', label: 'Xuất HC', path: '/qc/qlnl/xuathc',
+				{ key: 'xuathc', label: 'Xuất HC', path: '/qc/qlhc/xuathc',
 				},
 		   ]
 		},

@@ -58,29 +58,29 @@ const MaterialSamplingComponent = () => {
             placeholder="K Number | Product Name"
             className="border p-1 rounded-md text-xs px-2"
           />
-          <button className="bg-blue-500 text-white px-3 py-1 rounded-md text-xs">Search</button>
-          <button className="bg-green-500 text-white px-3 py-1 rounded-md text-xs">Sample</button>
+          <button className="bg-blue-500 text-white px-3 py-1 rounded-md text-xs">Tìm kiếm</button>
+          <button className="bg-green-500 text-white px-3 py-1 rounded-md text-xs">Thêm mới</button>
           <div className="flex-grow"></div>
-          <button className="bg-yellow-500 text-white px-3 py-1 rounded-md text-xs">Export to Excel</button>
+          <button className="bg-yellow-500 text-white px-3 py-1 rounded-md text-xs">Xuất Excel</button>
         </div>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full border-collapse text-xs">
           <thead>
             <tr className="bg-gray-100">
-              <th className="border px-1 py-1 text-xs">No</th>
-              <th className="border whitespace-nowrap px-1 py-1 text-xs">Entry Date</th>
-              <th className="border whitespace-nowrap px-1 py-1 text-xs">Entered By</th>
-              <th className="border px-1 whitespace-nowrap py-1 text-xs">Status</th>
-              <th className="border px-1 whitespace-nowrap py-1 text-xs">Material Type</th>
-              <th className="border px-1 whitespace-nowrap py-1 text-xs">Lot Number</th>
-              <th className="border px-1 whitespace-nowrap py-1 text-xs">K Number</th>
-              <th className="border px-1 whitespace-nowrap py-1 text-xs">Weight</th>
-              <th className="border px-1 whitespace-nowrap py-1 text-xs">Packaging</th>
-              <th className="border px-1 whitespace-nowrap py-1 text-xs">Production Date</th>
-              <th className="border px-1 whitespace-nowrap py-1 text-xs">Expiry Date</th>
-              <th className="border px-1 whitespace-nowrap py-1 text-xs">Manufacturer</th>
-              <th className="border px-1 whitespace-nowrap py-1 text-xs">Supplier</th>
+              <th className="border px-1 py-1 text-xs">STT</th>
+              <th className="border whitespace-nowrap px-1 py-1 text-xs">Ngày nhập</th>
+              <th className="border whitespace-nowrap px-1 py-1 text-xs">Người nhập</th>
+              <th className="border px-1 whitespace-nowrap py-1 text-xs">Trạng thái</th>
+              <th className="border px-1 whitespace-nowrap py-1 text-xs">Nguyên liệu</th>
+              <th className="border px-1 whitespace-nowrap py-1 text-xs">Số lô</th>
+              <th className="border px-1 whitespace-nowrap py-1 text-xs">Số K</th>
+              <th className="border px-1 whitespace-nowrap py-1 text-xs">Khối lượng</th>
+              <th className="border px-1 whitespace-nowrap py-1 text-xs">Quy cách</th>
+              <th className="border px-1 whitespace-nowrap py-1 text-xs">Ngày sản xuất</th>
+              <th className="border px-1 whitespace-nowrap py-1 text-xs">Hạn dùng</th>
+              <th className="border px-1 whitespace-nowrap py-1 text-xs">Nhà SX</th>
+              <th className="border px-1 whitespace-nowrap py-1 text-xs">Nhà CC</th>
             </tr>
           </thead>
           <tbody>

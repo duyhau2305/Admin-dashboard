@@ -15,7 +15,7 @@ import MaterialsCatalog from '../MaterialsCatalog';
 import Product3 from '../Product3';
 import SubstituteMaterialTable from '../SubstituteMaterialTable';
 import RegistrationTable from '../RegistrationTable';
-import InspectionSheet from '../InspectionSheet';
+import InspectionSheet from '../pages/QC Tool/InspectionSheet';
 import WorkRegistration from '../WorkRegistration';
 import OvertimeRegistration from '../pages/works/Timextra';
 import ManageNews from '../pages/Admin/ManageNews';
@@ -26,6 +26,12 @@ import PhuLieuPage from '../pages/QC Tool/PhuLieuPage';
 import SamplingComponent from '../pages/QC Tool/SamplingComponent';
 import MaterialSamplingComponent from '../pages/QC Tool/MaterialSamplingComponent';
 import ResultPhuLieu from '../pages/QC Tool/ResultPhuLieu';
+import ResultNguyenLieu from '../pages/QC Tool/ResultNguyenLieu';
+import ChemicalTable from '../pages/QC Tool/HC/ChemicalTable';
+import ChemicalEntry from '../pages/QC Tool/HC/ChemicalEntry';
+import ExportChemical from '../pages/QC Tool/HC/ExportChemical';
+import ProductList from '../pages/QC Tool/TP/ProductList';
+import ProductSampling from '../pages/QC Tool/TP/ProductSampling';
 
 
 
@@ -46,6 +52,16 @@ const routeComponents = {
   '/qc/qlnl': MaterialsCatalog,
   '/qc/qlnl/dmnl': MaterialsCatalog,  
   '/qc/qlnl/maunl': MaterialSamplingComponent,  
+  '/qc/qlnl/phieukiemnghiem': ResultNguyenLieu, 
+  '/qc/qlhc': ChemicalTable,
+  '/qc/qlhc/dmhc': ChemicalTable,
+  '/qc/qlhc/nhaphc': ChemicalEntry,
+  '/qc/qlhc/xuathc': ExportChemical,
+
+  '/qc/qltp': ProductList,
+  '/qc/qltp/dmtp': ProductList,
+  '/qc/qltp/mautp': ProductSampling,
+
   '/timesheets': Timsheets,
   '/timesheets/timesheet': Timsheets,
   '/timesheets/dangkylamviec': WorkRegistration,
@@ -76,11 +92,20 @@ function Layout() {
 
   return (
     <div className="flex h-screen w-screen">
-      <Siderbar />
-      <div className="flex-1 flex flex-col ">
-        <Header searchQuery={searchQuery} handleSearchChange={handleSearchChange} />
-        <div className="p-2 bg-neutral-200 flex-1 overflow-y-auto">
-          {renderContent()}
+      {/* Siderbar luôn cố định */}
+      <div className="flex-none">
+        <Siderbar />
+      </div>
+      <div className="flex-1 flex flex-col">
+        {/* Header luôn cố định và chiếm toàn bộ chiều rộng */}
+        <div className="flex-none w-full flex-shrink-0">
+          <Header searchQuery={searchQuery} handleSearchChange={handleSearchChange} />
+        </div>
+        {/* Nội dung chính có thể cuộn theo cả chiều ngang và dọc */}
+        <div className="p-2 bg-neutral-200 flex-1 overflow-auto">
+          <div className="min-w-[1000px] overflow-x-auto"> {/* Đảm bảo có chiều rộng tối thiểu và cuộn ngang */}
+            {renderContent()}
+          </div>
         </div>
       </div>
     </div>
@@ -88,3 +113,4 @@ function Layout() {
 }
 
 export default Layout;
+
