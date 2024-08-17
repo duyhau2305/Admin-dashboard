@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import DynamicFormModal from './DynamicFormModal';
+import ExportExcelButton from './ExportExcelButton';
 
 function ProductSampling() {
   const [samplingData, setSamplingData] = useState([
@@ -32,49 +34,40 @@ function ProductSampling() {
       manufacturer: 'Công ty XYZ',
       supplier: 'Nhà cung cấp Y',
     },
-    // Add more data as needed...
   ]);
 
   const [searchTerm, setSearchTerm] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Handle the search button functionality
   const handleSearch = () => {
-    if (searchTerm) {
-      const filteredData = samplingData.filter(item =>
-        item.material.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setSamplingData(filteredData);
-    } else {
-      alert('Vui lòng nhập từ khóa để tìm kiếm');
-    }
+    // Placeholder for search logic
+    alert('Search functionality to be implemented.');
   };
 
-  // Handle adding a new item
   const handleAddNew = () => {
-    const newItem = {
-      id: samplingData.length + 1,
-      dateIn: 'DD/MM/YYYY',
-      enteredBy: 'Người nhập mới',
-      status: 'Mới tạo',
-      material: 'Phụ liệu mới',
-      batch: `PL00${samplingData.length + 1}`,
-      serialNumber: `K00${samplingData.length + 1}`,
-      weight: 0,
-      specification: '',
-      productionDate: '',
-      expiryDate: '',
-      manufacturer: '',
-      supplier: '',
-    };
-    setSamplingData([...samplingData, newItem]);
+    setIsModalOpen(true);
   };
 
-  // Handle exporting data to Excel
-  const handleExportExcel = () => {
-    // Logic for exporting data to Excel can be implemented here
-    console.log('Xuất dữ liệu thành file Excel...');
-    alert('Xuất dữ liệu thành công!');
+  const handleSaveNewItem = (newItem) => {
+    setSamplingData([...samplingData, { id: samplingData.length + 1, ...newItem }]);
+    setIsModalOpen(false);
   };
+
+  // Define form fields for DynamicFormModal
+  const formFields = [
+    { name: 'dateIn', label: 'Ngày nhập', type: 'date' },
+    { name: 'enteredBy', label: 'Người nhập', type: 'text', placeholder: 'Nguyễn Văn A' },
+    { name: 'status', label: 'Trạng thái', type: 'text' },
+    { name: 'material', label: 'Phụ liệu', type: 'text' },
+    { name: 'batch', label: 'Số lô', type: 'text' },
+    { name: 'serialNumber', label: 'Số K', type: 'text' },
+    { name: 'weight', label: 'Khối lượng', type: 'number' },
+    { name: 'specification', label: 'Quy cách', type: 'text' },
+    { name: 'productionDate', label: 'Ngày sản xuất', type: 'date' },
+    { name: 'expiryDate', label: 'Hạn dùng', type: 'date' },
+    { name: 'manufacturer', label: 'Nhà sản xuất', type: 'text' },
+    { name: 'supplier', label: 'Nhà cung cấp', type: 'text' },
+  ];
 
   return (
     <div className="container mx-auto mt-3">
@@ -82,8 +75,6 @@ function ProductSampling() {
         <div className="flex items-center gap-2 mb-2 mt-2">
           <input
             type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Phụ liệu | Material Name"
             className="border p-1 rounded-md text-sm px-2"
           />
@@ -100,12 +91,7 @@ function ProductSampling() {
             Thêm mới
           </button>
           <div className="flex-grow"></div>
-          <button
-            className="bg-yellow-500 text-white px-3 py-1 rounded-md text-xs"
-            onClick={handleExportExcel}
-          >
-            Xuất Excel
-          </button>
+          <ExportExcelButton data={samplingData} />
         </div>
       </div>
 
@@ -147,6 +133,14 @@ function ProductSampling() {
           ))}
         </tbody>
       </table>
+
+      <DynamicFormModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveNewItem}
+        formFields={formFields}
+        contentLabel={"Lấy mẫu thanh phẩm"}
+      />
     </div>
   );
 }

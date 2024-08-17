@@ -10,7 +10,7 @@ import Settings from './components/pages/Settings';
 import Profile from './components/pages/Profile';
 import Login from './components/shared/Login';
 import Timsheets from './components/pages/Timsheets';
-import UserList from './components/Userlist';
+import UserList from './components/pages/Admin/Userlist';
 import MaterialsCatalog from './components/MaterialsCatalog';
 import SubstituteMaterialTable from './components/SubstituteMaterialTable';
 import RegistrationTable from './components/RegistrationTable';
@@ -21,11 +21,15 @@ import News from './components/pages/News';
 import HelpAndSupportManagement from './components/pages/Support/HelpAndSupportManagement';
 import PhuLieuCatalog from './components/pages/QC Tool/PhuLieuPage';
 import SamplingComponent from './components/pages/QC Tool/SamplingComponent';
+import MaterialSamplingComponent from './components/pages/QC Tool/MaterialSamplingComponent';
 import ResultPhuLieu from './components/pages/QC Tool/ResultPhuLieu';
+import ResultNguyenLieu from './components/pages/QC Tool/ResultNguyenLieu';
 import ChemicalTable from './components/pages/QC Tool/HC/ChemicalTable';
 import ChemicalEntry from './components/pages/QC Tool/HC/ChemicalEntry';
 import ExportChemical from './components/pages/QC Tool/HC/ExportChemical';
 import ProductList from './components/pages/QC Tool/TP/ProductList';
+import ProductSampling from './components/pages/QC Tool/TP/ProductSampling';
+import ManageNews from './components/pages/Admin/ManageNews';
 
 function App() {
   return (
@@ -43,7 +47,6 @@ function App() {
             <Route index element={<ProductPage />} />
             <Route path="product2" element={<Product2 />} />
             <Route path="product3" element={<Product3 />} />
-            <Route path="*" element={<Outlet />} />
           </Route>
 
           {/* QA Routes */}
@@ -53,7 +56,6 @@ function App() {
             <Route path="nguyenlieuthaythe" element={<SubstituteMaterialTable />} />
             <Route path="sodangky" element={<RegistrationTable />} />
             <Route path="phieukiemnghiemnguyenlieu" element={<InspectionSheet />} />
-            <Route path="*" element={<Outlet />} />
           </Route>
           
           {/* QC Routes */}
@@ -66,8 +68,8 @@ function App() {
             </Route>
             <Route path="qlnl" element={<MaterialsCatalog />}>
               <Route path="dmnl" element={<MaterialsCatalog />} />
-              <Route path="maupl" element={<SamplingComponent />} />
-              <Route path="phieukiemnghiem" element={<SamplingComponent />} />
+              <Route path="maunl" element={<MaterialSamplingComponent />} />
+              <Route path="phieukiemnghiem" element={<ResultNguyenLieu />} />
             </Route>
             <Route path="qlhc" element={<ChemicalTable />}>
               <Route path="dmhc" element={<ChemicalTable />} />
@@ -76,19 +78,16 @@ function App() {
             </Route>
             <Route path="qltp" element={<ProductList />}>
               <Route path="dmtp" element={<ProductList />} />
-              <Route path="mautp" element={<ChemicalEntry />} />
-              <Route path="xuathc" element={<ExportChemical />} />
+              <Route path="mautp" element={<ProductSampling />} />
             </Route>
-            <Route path="*" element={<Outlet />} />
           </Route>
 
           {/* Admin Routes */}
           <Route path="admin" element={<UserList />}>
-            <Route index element={<ProductPage />} />
+            <Route index element={<UserList />} />
             <Route path="userlist" element={<UserList />} />
-            <Route path="managenews" element={<UserList />} />
+            <Route path="managenews" element={<ManageNews />} />
             <Route path="managehelpandsupport" element={<HelpAndSupportManagement />} />
-            <Route path="*" element={<Outlet />} />
           </Route>
 
           {/* Timesheets Routes */}
@@ -97,7 +96,6 @@ function App() {
             <Route path="timesheet" element={<Timsheets />} />
             <Route path="dangkylamviec" element={<WorkRegistration />} />
             <Route path="dangkythemgio" element={<OvertimeRegistration />} />
-            <Route path="*" element={<Outlet />} />
           </Route>
 
           {/* Other Routes */}

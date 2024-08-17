@@ -66,37 +66,37 @@ const MaterialsCatalog = () => {
       <table className="min-w-full bg-white border border-gray-200">
         <thead>
           <tr className="bg-gray-100">
-            <th className="border px-4 py-2">STT</th>
-            <th className="border px-4 py-2">Trạng thái</th>
-            <th className="border px-4 py-2">NCode</th>
-            <th className="border px-4 py-2">Gửi mẫu ngoài</th>
-            <th className="border px-4 py-2">Nguyên liệu</th>
-            <th className="border px-4 py-2">INN</th>
-            <th className="border px-4 py-2">Loại</th>
-            <th className="border px-4 py-2">ĐMKN</th>
-            <th className="border px-4 py-2">ĐVT</th>
-            <th className="border px-4 py-2">Nhà SX</th>
-            <th className="border px-4 py-2">Quốc gia</th>
-            <th className="border px-4 py-2">COA</th>
+            <th className="border whitespace-nowrap px-2 py-1 text-xs">STT</th>
+            <th className="border whitespace-nowrap px-2 py-1 text-xs">Trạng thái</th>
+            <th className="border whitespace-nowrap px-2 py-1 text-xs">NCode</th>
+            <th className="border whitespace-nowrap px-2 py-1 text-xs">Gửi mẫu ngoài</th>
+            <th className="border whitespace-nowrap px-2 py-1 text-xs">Nguyên liệu</th>
+            <th className="border whitespace-nowrap px-2 py-1 text-xs">INN</th>
+            <th className="border whitespace-nowrap px-2 py-1 text-xs">Loại</th>
+            <th className="border whitespace-nowrap px-2 py-1 text-xs">ĐMKN</th>
+            <th className="border whitespace-nowrap px-2 py-1 text-xs">ĐVT</th>
+            <th className="border whitespace-nowrap px-2 py-1 text-xs">Nhà SX</th>
+            <th className="border whitespace-nowrap px-2 py-1 text-xs">Quốc gia</th>
+            <th className="border whitespace-nowrap px-2 py-1 text-xs">COA</th>
           </tr>
         </thead>
         <tbody>
           {materials.map((material) => (
             <tr key={material.id} className="hover:bg-gray-50">
-              <td className="border px-4 py-2">{material.id}</td>
-              <td className="border px-4 py-2">{material.status}</td>
-              <td className="border px-4 py-2">{material.nCode}</td>
-              <td className="border px-4 py-2 text-center">
+              <td className="border px-4 py-2 text-sm">{material.id}</td>
+              <td className="border px-4 py-2 text-sm">{material.status}</td>
+              <td className="border px-4 py-2 text-sm">{material.nCode}</td>
+              <td className="border px-4 py-2 text-center text-sm">
                 <input type="checkbox" />
               </td>
-              <td className="border px-4 py-2">{material.material}</td>
-              <td className="border px-4 py-2"></td>
-              <td className="border px-4 py-2">{material.type}</td>
-              <td className="border px-4 py-2">0</td>
-              <td className="border px-4 py-2">{material.unit}</td>
-              <td className="border px-4 py-2">{material.manufacturer}</td>
-              <td className="border px-4 py-2">{material.country}</td>
-              <td className="border px-4 py-2"></td>
+              <td className="border px-4 py-2 text-sm">{material.material}</td>
+              <td className="border px-4 py-2 text-sm"></td>
+              <td className="border px-4 py-2 text-sm">{material.type}</td>
+              <td className="border px-4 py-2 text-sm">0</td>
+              <td className="border px-4 py-2 text-sm">{material.unit}</td>
+              <td className="border px-4 py-2 text-sm">{material.manufacturer}</td>
+              <td className="border px-4 py-2 text-sm">{material.country}</td>
+              <td className="border px-4 py-2 text-sm"></td>
             </tr>
           ))}
         </tbody>

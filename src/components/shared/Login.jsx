@@ -1,14 +1,39 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaUserAlt, FaLock, FaEye, FaEyeSlash, FaUsers, FaBook } from 'react-icons/fa'; 
+import { toast } from 'react-toastify';
 
 function Login() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
-  const handleLogin = (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault();
-    navigate('/');
+
+    try {
+      const response = await fetch('http://localhost:5000/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem('token', data.token); // Lưu token vào localStorage
+        toast.success('Đăng nhập thành công!');
+        navigate('/'); // Điều hướng đến trang chủ sau khi đăng nhập thành công
+      } else {
+        toast.error(data.message || 'Đăng nhập không thành công!');
+      }
+    } catch (error) {
+      console.error('Error logging in:', error);
+      toast.error('Có lỗi xảy ra khi đăng nhập.');
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -27,6 +52,8 @@ function Login() {
               id="username"
               type="text"
               name="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
               className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500"
               placeholder="Username"
@@ -39,6 +66,8 @@ function Login() {
               id="password"
               type={showPassword ? "text" : "password"}
               name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
               className="w-full py-2 pl-10 pr-10 border border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500"
               placeholder="Password"

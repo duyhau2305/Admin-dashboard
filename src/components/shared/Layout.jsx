@@ -10,7 +10,7 @@ import HelpAndSupport from '../pages/Support/HelpAndSupport';
 import Profile from '../pages/Profile';
 import Product2 from '../Product2';
 import Timsheets from '../pages/Timsheets';
-import UserList from '../Userlist';
+import UserList from '../pages/Admin/Userlist';
 import MaterialsCatalog from '../MaterialsCatalog';
 import Product3 from '../Product3';
 import SubstituteMaterialTable from '../SubstituteMaterialTable';
