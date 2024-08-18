@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { FaUserAlt, FaLock, FaEye, FaEyeSlash, FaUsers, FaBook } from 'react-icons/fa'; 
 import { toast } from 'react-toastify';
 
@@ -13,26 +14,31 @@ function Login() {
     event.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5000/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
+      const response = await axios.post('http://localhost:5000/api/auth/login', { 
+        username, 
+        password 
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem('token', data.token); // Lưu token vào localStorage
+      if (response.status === 200) {
+        localStorage.setItem('token', response.data.token); // Save token to localStorage
         toast.success('Đăng nhập thành công!');
-        navigate('/'); // Điều hướng đến trang chủ sau khi đăng nhập thành công
+        navigate('/'); // Navigate to the homepage after a successful login
       } else {
-        toast.error(data.message || 'Đăng nhập không thành công!');
+        toast.error('Đăng nhập không thành công!');
       }
     } catch (error) {
-      console.error('Error logging in:', error);
-      toast.error('Có lỗi xảy ra khi đăng nhập.');
+      console.log('Error:', error);
+      console.log('Error Response:', error.response);
+
+      if (error.response) {
+        if (error.response.status === 400 || error.response.status === 401) {
+          toast.error('Tài khoản hoặc mật khẩu không đúng!');
+        } else {
+          toast.error('Có lỗi xảy ra khi đăng nhập.');
+        }
+      } else {
+        toast.error('Không thể kết nối tới server.');
+      }
     }
   };
 

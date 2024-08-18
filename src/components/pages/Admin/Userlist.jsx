@@ -1,111 +1,112 @@
-// src/components/UserList.js
-
 import React, { useState, useEffect } from 'react';
-import { FaEdit, FaTrash, FaLock, FaUnlock, FaPlus, FaEnvelope } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaLock, FaUnlock, FaPlus } from 'react-icons/fa';
 import UserFormModal from './UserFormModal';
 import { toast, ToastContainer } from 'react-toastify';
-import emailjs from 'emailjs-com';
+import axios from 'axios';
 
 const UserList = () => {
+  // Khai báo các state để quản lý người dùng, trạng thái modal và người dùng đã chọn
   const [users, setUsers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
+  // Hàm này sẽ được gọi khi component được mount để lấy danh sách người dùng
   useEffect(() => {
-    fetchUsers().then(data => setUsers(data));
+    fetchUsers();
   }, []);
 
+  // Hàm để gọi API lấy danh sách người dùng
   const fetchUsers = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/users');
-      const data = await response.json();
-      return data;
+      const token = localStorage.getItem('token'); // Lấy token từ localStorage
+      const response = await axios.get('http://localhost:5000/api/auth/users', {
+        headers: {
+          'x-auth-token': token, // Gửi token trong header để xác thực
+        },
+      });
+      setUsers(response.data); // Cập nhật state người dùng
     } catch (error) {
       console.error('Error fetching users:', error);
-      toast.error('Lỗi khi tải danh sách người dùng');
+      toast.error('Lỗi khi tải danh sách người dùng'); // Hiển thị thông báo lỗi
     }
   };
 
+  // Hàm để mở modal để tạo mới người dùng
   const handleCreateUser = () => {
-    setSelectedUser(null);
-    setIsModalOpen(true);
+    setSelectedUser(null); // Đặt selectedUser là null khi tạo mới
+    setIsModalOpen(true); // Mở modal
   };
 
+  // Hàm để mở modal và chỉnh sửa người dùng
   const handleEditUser = (user) => {
-    setSelectedUser(user);
-    setIsModalOpen(true);
+    setSelectedUser(user); // Đặt người dùng được chọn
+    setIsModalOpen(true); // Mở modal
   };
 
+  // Hàm để lưu thông tin người dùng mới hoặc cập nhật người dùng đã tồn tại
   const handleSaveUser = async (data) => {
     try {
+      const token = localStorage.getItem('token'); // Lấy token từ localStorage
+      let response;
       if (selectedUser) {
-        // Cập nhật người dùng
-        await fetch(`http://localhost:5000/api/users/${selectedUser.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
+        // Nếu có người dùng được chọn, cập nhật thông tin người dùng
+        response = await axios.put(`http://localhost:5000/api/auth/users/${selectedUser._id}`, data, {
+          headers: {
+            'x-auth-token': token, // Gửi token trong header để xác thực
+          },
         });
-        setUsers(users.map(user => (user.id === selectedUser.id ? { ...user, ...data } : user)));
-        toast.success('Cập nhật người dùng thành công');
+        setUsers(users.map(user => (user._id === selectedUser._id ? response.data : user))); // Cập nhật danh sách người dùng
+        toast.success('Cập nhật người dùng thành công'); // Hiển thị thông báo thành công
       } else {
-        // Tạo người dùng mới
-        await fetch('http://localhost:5000/api/users', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
+        // Nếu không có người dùng được chọn, tạo mới người dùng
+        response = await axios.post('http://localhost:5000/api/auth/users', data, {
+          headers: {
+            'x-auth-token': token, // Gửi token trong header để xác thực
+          },
         });
-        const newUser = { ...data, id: Date.now() };
-        setUsers([...users, newUser]);
-        toast.success('Tạo người dùng mới thành công');
+        setUsers([...users, response.data]); // Thêm người dùng mới vào danh sách
+        toast.success('Tạo người dùng mới thành công'); // Hiển thị thông báo thành công
       }
-      setIsModalOpen(false);
+      setIsModalOpen(false); // Đóng modal
     } catch (error) {
-      console.error('Error saving user:', error);
-      toast.error('Lỗi khi lưu người dùng');
+      console.error('Error saving user:', error.response || error.message);
+      toast.error('Lỗi khi lưu người dùng'); // Hiển thị thông báo lỗi
     }
   };
 
+  // Hàm để xóa người dùng
   const handleDeleteUser = async (id) => {
     try {
-      await fetch(`http://localhost:5000/api/users/${id}`, {
-        method: 'DELETE',
+      const token = localStorage.getItem('token'); // Lấy token từ localStorage
+      await axios.delete(`http://localhost:5000/api/auth/users/${id}`, {
+        headers: {
+          'x-auth-token': token, // Gửi token trong header để xác thực
+        },
       });
-      setUsers(users.filter(user => user.id !== id));
-      toast.success('Xóa người dùng thành công');
+      setUsers(users.filter(user => user._id !== id)); // Xóa người dùng khỏi danh sách
+      toast.success('Xóa người dùng thành công'); // Hiển thị thông báo thành công
     } catch (error) {
-      console.error('Error deleting user:', error);
-      toast.error('Lỗi khi xóa người dùng');
+      console.error('Error deleting user:', error.response || error.message);
+      toast.error('Lỗi khi xóa người dùng'); // Hiển thị thông báo lỗi
     }
   };
 
+  // Hàm để khóa/mở khóa người dùng
   const handleToggleLockUser = async (id) => {
-    const user = users.find(user => user.id === id);
+    const user = users.find(user => user._id === id); // Tìm người dùng cần thay đổi trạng thái
     try {
-      await fetch(`http://localhost:5000/api/users/${id}/lock`, {
-        method: 'PUT',
+      const token = localStorage.getItem('token'); // Lấy token từ localStorage
+      const response = await axios.put(`http://localhost:5000/api/auth/users/${id}/lock`, null, {
+        headers: {
+          'x-auth-token': token, // Gửi token trong header để xác thực
+        },
       });
-      setUsers(users.map(user => (user.id === id ? { ...user, locked: !user.locked } : user)));
-      toast.success('Thay đổi trạng thái khóa/mở khóa thành công');
+      setUsers(users.map(user => (user._id === id ? { ...user, locked: !user.locked } : user))); // Cập nhật trạng thái khóa
+      toast.success(`Người dùng đã được ${response.data.locked ? 'khóa' : 'mở khóa'}`); // Hiển thị thông báo thành công
     } catch (error) {
-      console.error('Error toggling user lock:', error);
-      toast.error('Lỗi khi thay đổi trạng thái khóa');
+      console.error('Error toggling user lock:', error.response || error.message);
+      toast.error('Lỗi khi thay đổi trạng thái khóa'); // Hiển thị thông báo lỗi
     }
-  };
-
-  const handleSendEmail = (user) => {
-    const templateParams = {
-      to_email: user.email,
-      username: user.username,
-      password: user.password,
-    };
-
-    emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams, 'YOUR_USER_ID')
-      .then(() => {
-        toast.success(`Email đã được gửi đến ${user.email}`);
-      }, (error) => {
-        toast.error('Lỗi khi gửi email');
-        console.error('EmailJS Error:', error);
-      });
   };
 
   return (
@@ -133,20 +134,13 @@ const UserList = () => {
         </thead>
         <tbody>
           {users.map(user => (
-            <tr key={user.id} className="border-b border-gray-200 hover:bg-gray-50 transition duration-150 ease-in-out">
+            <tr key={user._id} className="border-b border-gray-200 hover:bg-gray-50 transition duration-150 ease-in-out">
               <td className="py-3 px-4">{user.employeeId}</td>
               <td className="py-3 px-4">{user.username}</td>
               <td className="py-3 px-4">{user.name}</td>
               <td className="py-3 px-4">{user.email}</td>
               <td className="py-3 px-4">{user.role}</td>
               <td className="py-3 px-4 flex justify-center">
-                <button
-                  className="text-blue-600 hover:text-blue-800 mx-2"
-                  title="Gửi email"
-                  onClick={() => handleSendEmail(user)}
-                >
-                  <FaEnvelope />
-                </button>
                 <button
                   className="text-green-600 hover:text-green-800 mx-2"
                   title="Sửa"
@@ -157,14 +151,14 @@ const UserList = () => {
                 <button
                   className="text-red-600 hover:text-red-800 mx-2"
                   title="Xóa"
-                  onClick={() => handleDeleteUser(user.id)}
+                  onClick={() => handleDeleteUser(user._id)}
                 >
                   <FaTrash />
                 </button>
                 <button
                   className="text-gray-600 hover:text-gray-800 mx-2"
                   title={user.locked ? 'Mở khóa' : 'Khóa'}
-                  onClick={() => handleToggleLockUser(user.id)}
+                  onClick={() => handleToggleLockUser(user._id)}
                 >
                   {user.locked ? <FaUnlock /> : <FaLock />}
                 </button>
@@ -174,7 +168,7 @@ const UserList = () => {
         </tbody>
       </table>
 
-      {/* User Form Modal */}
+      {/* Modal để tạo mới hoặc chỉnh sửa người dùng */}
       {isModalOpen && (
         <UserFormModal
           isOpen={isModalOpen}
@@ -183,7 +177,7 @@ const UserList = () => {
           initialData={selectedUser}
         />
       )}
-      <ToastContainer/>
+      <ToastContainer /> {/* Hiển thị các thông báo */}
     </div>
   );
 };

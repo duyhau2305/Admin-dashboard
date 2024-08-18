@@ -1,5 +1,8 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthProvider';
+
+import PrivateRoute from './contexts/PrivateRoute';
 import Layout from './components/shared/Layout';
 import Dashboard from './components/Dashboard';
 import ProductPage from './components/ProductPage';
@@ -33,79 +36,83 @@ import ManageNews from './components/pages/Admin/ManageNews';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/login" element={<Login />} />
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/login" element={<Login />} />
 
-        {/* Protected Routes */}
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Dashboard />} />
-          
-          {/* Products Routes */}
-          <Route path="products" element={<ProductPage />}>
-            <Route index element={<ProductPage />} />
-            <Route path="product2" element={<Product2 />} />
-            <Route path="product3" element={<Product3 />} />
-          </Route>
+          {/* Protected Routes */}
+          <Route element={<PrivateRoute />}>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Dashboard />} />
 
-          {/* QA Routes */}
-          <Route path="qa" element={<MaterialsCatalog />}>
-            <Route index element={<MaterialsCatalog />} />
-            <Route path="danhmucnguyenlieu" element={<MaterialsCatalog />} />
-            <Route path="nguyenlieuthaythe" element={<SubstituteMaterialTable />} />
-            <Route path="sodangky" element={<RegistrationTable />} />
-            <Route path="phieukiemnghiemnguyenlieu" element={<InspectionSheet />} />
-          </Route>
-          
-          {/* QC Routes */}
-          <Route path="qc" element={<MaterialsCatalog />}>
-            <Route index element={<MaterialsCatalog />} />
-            <Route path="qlpl" element={<PhuLieuCatalog />}>
-              <Route path="dmpl" element={<PhuLieuCatalog />} />
-              <Route path="maupl" element={<SamplingComponent />} />
-              <Route path="phieukiemnghiem" element={<ResultPhuLieu />} />
+              {/* Products Routes */}
+              <Route path="products" element={<ProductPage />}>
+                <Route index element={<ProductPage />} />
+                <Route path="product2" element={<Product2 />} />
+                <Route path="product3" element={<Product3 />} />
+              </Route>
+
+              {/* QA Routes */}
+              <Route path="qa" element={<MaterialsCatalog />}>
+                <Route index element={<MaterialsCatalog />} />
+                <Route path="danhmucnguyenlieu" element={<MaterialsCatalog />} />
+                <Route path="nguyenlieuthaythe" element={<SubstituteMaterialTable />} />
+                <Route path="sodangky" element={<RegistrationTable />} />
+                <Route path="phieukiemnghiemnguyenlieu" element={<InspectionSheet />} />
+              </Route>
+              
+              {/* QC Routes */}
+              <Route path="qc" element={<MaterialsCatalog />}>
+                <Route index element={<MaterialsCatalog />} />
+                <Route path="qlpl" element={<PhuLieuCatalog />}>
+                  <Route path="dmpl" element={<PhuLieuCatalog />} />
+                  <Route path="maupl" element={<SamplingComponent />} />
+                  <Route path="phieukiemnghiem" element={<ResultPhuLieu />} />
+                </Route>
+                <Route path="qlnl" element={<MaterialsCatalog />}>
+                  <Route path="dmnl" element={<MaterialsCatalog />} />
+                  <Route path="maunl" element={<MaterialSamplingComponent />} />
+                  <Route path="phieukiemnghiem" element={<ResultNguyenLieu />} />
+                </Route>
+                <Route path="qlhc" element={<ChemicalTable />}>
+                  <Route path="dmhc" element={<ChemicalTable />} />
+                  <Route path="nhaphc" element={<ChemicalEntry />} />
+                  <Route path="xuathc" element={<ExportChemical />} />
+                </Route>
+                <Route path="qltp" element={<ProductList />}>
+                  <Route path="dmtp" element={<ProductList />} />
+                  <Route path="mautp" element={<ProductSampling />} />
+                </Route>
+              </Route>
+
+              {/* Admin Routes */}
+              <Route path="admin" element={<UserList />}>
+                <Route index element={<UserList />} />
+                <Route path="userlist" element={<UserList />} />
+                <Route path="managenews" element={<ManageNews />} />
+                <Route path="managehelpandsupport" element={<HelpAndSupportManagement />} />
+              </Route>
+
+              {/* Timesheets Routes */}
+              <Route path="timesheets" element={<Timsheets />}>
+                <Route index element={<Timsheets />} />
+                <Route path="timesheet" element={<Timsheets />} />
+                <Route path="dangkylamviec" element={<WorkRegistration />} />
+                <Route path="dangkythemgio" element={<OvertimeRegistration />} />
+              </Route>
+
+              {/* Other Routes */}
+              <Route path="messages" element={<News />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="support" element={<HelpAndSupport />} />
+              <Route path="profile" element={<Profile />} />
             </Route>
-            <Route path="qlnl" element={<MaterialsCatalog />}>
-              <Route path="dmnl" element={<MaterialsCatalog />} />
-              <Route path="maunl" element={<MaterialSamplingComponent />} />
-              <Route path="phieukiemnghiem" element={<ResultNguyenLieu />} />
-            </Route>
-            <Route path="qlhc" element={<ChemicalTable />}>
-              <Route path="dmhc" element={<ChemicalTable />} />
-              <Route path="nhaphc" element={<ChemicalEntry />} />
-              <Route path="xuathc" element={<ExportChemical />} />
-            </Route>
-            <Route path="qltp" element={<ProductList />}>
-              <Route path="dmtp" element={<ProductList />} />
-              <Route path="mautp" element={<ProductSampling />} />
-            </Route>
           </Route>
-
-          {/* Admin Routes */}
-          <Route path="admin" element={<UserList />}>
-            <Route index element={<UserList />} />
-            <Route path="userlist" element={<UserList />} />
-            <Route path="managenews" element={<ManageNews />} />
-            <Route path="managehelpandsupport" element={<HelpAndSupportManagement />} />
-          </Route>
-
-          {/* Timesheets Routes */}
-          <Route path="timesheets" element={<Timsheets />}>
-            <Route index element={<Timsheets />} />
-            <Route path="timesheet" element={<Timsheets />} />
-            <Route path="dangkylamviec" element={<WorkRegistration />} />
-            <Route path="dangkythemgio" element={<OvertimeRegistration />} />
-          </Route>
-
-          {/* Other Routes */}
-          <Route path="messages" element={<News />} />
-          <Route path="settings" element={<Settings />} />
-          <Route path="support" element={<HelpAndSupport />} />
-          <Route path="profile" element={<Profile />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

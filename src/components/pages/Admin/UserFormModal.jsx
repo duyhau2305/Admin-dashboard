@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -17,17 +17,22 @@ const UserFormModal = ({ isOpen, onClose, onSave, initialData }) => {
     role: yup.string().required('Vai trò là bắt buộc'),
   });
 
-  const { register, handleSubmit, formState: { errors }, reset } = useForm({
+  const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm({
     resolver: yupResolver(validationSchema),
-    defaultValues: initialData || {
-      employeeId: '',
-      username: '',
-      name: '',
-      email: '',
-      password: '',
-      role: '',
-    },
   });
+
+  useEffect(() => {
+    if (initialData) {
+      setValue('employeeId', initialData.employeeId);
+      setValue('username', initialData.username);
+      setValue('name', initialData.name);
+      setValue('email', initialData.email);
+      setValue('password', initialData.password);
+      setValue('role', initialData.role);
+    } else {
+      reset(); // Reset form when there's no initial data
+    }
+  }, [initialData, reset, setValue]);
 
   const onSubmit = (data) => {
     onSave(data);
