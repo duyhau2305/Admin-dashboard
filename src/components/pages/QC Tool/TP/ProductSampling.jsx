@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import DynamicFormModal from './DynamicFormModal';
-import ExportExcelButton from './ExportExcelButton';
+import DynamicFormModal from '../../../../libs/consts/DynamicFormModal';
+import ExportExcelButton from '../../../../libs/consts/ExportExcelButton';
 
 function ProductSampling() {
   const [samplingData, setSamplingData] = useState([

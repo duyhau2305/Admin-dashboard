@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const dailyMaterials = [
+const initialMaterials = [
   {
     date: '2024-08-07',
     items: [
@@ -11,6 +13,7 @@ const dailyMaterials = [
         manufacturer: 'Nhà sản xuất X',
         quantityRequirement: 50,
         quantity: 25,
+        isExported: false, // Thêm trạng thái này để theo dõi
       },
       {
         id: '002',
@@ -19,6 +22,7 @@ const dailyMaterials = [
         manufacturer: 'Nhà sản xuất Y',
         quantityRequirement: 100,
         quantity: 75,
+        isExported: false, // Thêm trạng thái này để theo dõi
       }
     ]
   },
@@ -32,6 +36,7 @@ const dailyMaterials = [
         manufacturer: 'Nhà sản xuất Z',
         quantityRequirement: 30,
         quantity: 10,
+        isExported: false, // Thêm trạng thái này để theo dõi
       }
     ]
   }
@@ -39,12 +44,28 @@ const dailyMaterials = [
 ];
 
 const MaterialList = () => {
+  const [materials, setMaterials] = useState(initialMaterials);
+
   const handleConfirm = (id) => {
-    console.log(`Xác nhận yêu cầu cho nguyên liệu có mã ${id}`);
+    const updatedMaterials = materials.map((day) => ({
+      ...day,
+      items: day.items.map((material) =>
+        material.id === id ? { ...material, isExported: true } : material
+      ),
+    }));
+
+    setMaterials(updatedMaterials);
+    toast.success('Đã gửi yêu cầu tới bộ phận kho');
   };
 
   const handleDelete = (id) => {
-    console.log(`Xóa nguyên liệu có mã ${id}`);
+    const updatedMaterials = materials.map((day) => ({
+      ...day,
+      items: day.items.filter((material) => material.id !== id)
+    })).filter(day => day.items.length > 0);
+
+    setMaterials(updatedMaterials);
+    toast.success('Xóa nguyên liệu thành công');
   };
 
   return (
@@ -52,7 +73,7 @@ const MaterialList = () => {
       <div className="text-lg font-semibold mb-4">
         Danh sách nguyên liệu theo ngày
       </div>
-      {dailyMaterials.map((day) => (
+      {materials.map((day) => (
         <div key={day.date} className="mb-6">
           <div className="text-xl font-medium mb-2">{`Ngày: ${day.date}`}</div>
           <div className="overflow-x-auto">
@@ -78,12 +99,16 @@ const MaterialList = () => {
                     <td className="py-2 px-4 text-xs">{material.quantityRequirement}</td>
                     <td className="py-2 px-4 text-xs">{material.quantity}</td>
                     <td className="py-2 px-4 text-xs flex space-x-2">
-                      <button
-                        onClick={() => handleConfirm(material.id)}
-                        className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                      >
-                        Yêu cầu xuất
-                      </button>
+                      {material.isExported ? (
+                        <span className="px-3 py-1 bg-green-500 text-white rounded">Đã xuất</span>
+                      ) : (
+                        <button
+                          onClick={() => handleConfirm(material.id)}
+                          className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        >
+                          Yêu cầu xuất
+                        </button>
+                      )}
                       
                       <button
                         onClick={() => handleDelete(material.id)}
@@ -99,6 +124,8 @@ const MaterialList = () => {
           </div>
         </div>
       ))}
+      {/* Toast Container để hiển thị thông báo */}
+      <ToastContainer />
     </div>
   );
 };

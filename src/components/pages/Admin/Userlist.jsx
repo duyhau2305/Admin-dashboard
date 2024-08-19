@@ -5,7 +5,6 @@ import { toast, ToastContainer } from 'react-toastify';
 import axios from 'axios';
 
 const UserList = () => {
-  // Khai báo các state để quản lý người dùng, trạng thái modal và người dùng đã chọn
   const [users, setUsers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -18,12 +17,13 @@ const UserList = () => {
   // Hàm để gọi API lấy danh sách người dùng
   const fetchUsers = async () => {
     try {
-      const token = localStorage.getItem('token'); // Lấy token từ localStorage
-      const response = await axios.get('http://localhost:5000/api/auth/users', {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:5000/api/users', {
         headers: {
-          'x-auth-token': token, // Gửi token trong header để xác thực
+          'Authorization': `Bearer ${token}`, // Sử dụng Bearer token để xác thực
         },
       });
+      console.log('Danh sách người dùng:', response.data); // Kiểm tra dữ liệu nhận được từ API
       setUsers(response.data); // Cập nhật state người dùng
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -31,7 +31,7 @@ const UserList = () => {
     }
   };
 
-  // Hàm để mở modal để tạo mới người dùng
+  // Hàm để mở modal tạo mới người dùng
   const handleCreateUser = () => {
     setSelectedUser(null); // Đặt selectedUser là null khi tạo mới
     setIsModalOpen(true); // Mở modal
@@ -46,66 +46,66 @@ const UserList = () => {
   // Hàm để lưu thông tin người dùng mới hoặc cập nhật người dùng đã tồn tại
   const handleSaveUser = async (data) => {
     try {
-      const token = localStorage.getItem('token'); // Lấy token từ localStorage
+      const token = localStorage.getItem('token');
       let response;
       if (selectedUser) {
         // Nếu có người dùng được chọn, cập nhật thông tin người dùng
-        response = await axios.put(`http://localhost:5000/api/auth/users/${selectedUser._id}`, data, {
+        response = await axios.put(`http://localhost:5000/api/users/${selectedUser._id}`, data, {
           headers: {
-            'x-auth-token': token, // Gửi token trong header để xác thực
+            'Authorization': `Bearer ${token}`,
           },
         });
         setUsers(users.map(user => (user._id === selectedUser._id ? response.data : user))); // Cập nhật danh sách người dùng
-        toast.success('Cập nhật người dùng thành công'); // Hiển thị thông báo thành công
+        toast.success('Cập nhật người dùng thành công');
       } else {
         // Nếu không có người dùng được chọn, tạo mới người dùng
-        response = await axios.post('http://localhost:5000/api/auth/users', data, {
+        response = await axios.post('http://localhost:5000/api/users', data, {
           headers: {
-            'x-auth-token': token, // Gửi token trong header để xác thực
+            'Authorization': `Bearer ${token}`,
           },
         });
         setUsers([...users, response.data]); // Thêm người dùng mới vào danh sách
-        toast.success('Tạo người dùng mới thành công'); // Hiển thị thông báo thành công
+        toast.success('Tạo người dùng mới thành công');
       }
       setIsModalOpen(false); // Đóng modal
     } catch (error) {
       console.error('Error saving user:', error.response || error.message);
-      toast.error('Lỗi khi lưu người dùng'); // Hiển thị thông báo lỗi
+      toast.error('Lỗi khi lưu người dùng');
     }
   };
 
   // Hàm để xóa người dùng
   const handleDeleteUser = async (id) => {
     try {
-      const token = localStorage.getItem('token'); // Lấy token từ localStorage
-      await axios.delete(`http://localhost:5000/api/auth/users/${id}`, {
+      const token = localStorage.getItem('token');
+      await axios.delete(`http://localhost:5000/api/users/${id}`, {
         headers: {
-          'x-auth-token': token, // Gửi token trong header để xác thực
+          'Authorization': `Bearer ${token}`,
         },
       });
       setUsers(users.filter(user => user._id !== id)); // Xóa người dùng khỏi danh sách
-      toast.success('Xóa người dùng thành công'); // Hiển thị thông báo thành công
+      toast.success('Xóa người dùng thành công');
     } catch (error) {
       console.error('Error deleting user:', error.response || error.message);
-      toast.error('Lỗi khi xóa người dùng'); // Hiển thị thông báo lỗi
+      toast.error('Lỗi khi xóa người dùng');
     }
   };
 
   // Hàm để khóa/mở khóa người dùng
   const handleToggleLockUser = async (id) => {
-    const user = users.find(user => user._id === id); // Tìm người dùng cần thay đổi trạng thái
+    const user = users.find(user => user._id === id);
     try {
-      const token = localStorage.getItem('token'); // Lấy token từ localStorage
-      const response = await axios.put(`http://localhost:5000/api/auth/users/${id}/lock`, null, {
+      const token = localStorage.getItem('token');
+      const response = await axios.put(`http://localhost:5000/api/users/${id}/lock`, null, {
         headers: {
-          'x-auth-token': token, // Gửi token trong header để xác thực
+          'Authorization': `Bearer ${token}`,
         },
       });
       setUsers(users.map(user => (user._id === id ? { ...user, locked: !user.locked } : user))); // Cập nhật trạng thái khóa
-      toast.success(`Người dùng đã được ${response.data.locked ? 'khóa' : 'mở khóa'}`); // Hiển thị thông báo thành công
+      toast.success(`Người dùng đã được ${response.data.locked ? 'khóa' : 'mở khóa'}`);
     } catch (error) {
       console.error('Error toggling user lock:', error.response || error.message);
-      toast.error('Lỗi khi thay đổi trạng thái khóa'); // Hiển thị thông báo lỗi
+      toast.error('Lỗi khi thay đổi trạng thái khóa');
     }
   };
 
@@ -133,42 +133,47 @@ const UserList = () => {
           </tr>
         </thead>
         <tbody>
-          {users.map(user => (
-            <tr key={user._id} className="border-b border-gray-200 hover:bg-gray-50 transition duration-150 ease-in-out">
-              <td className="py-3 px-4">{user.employeeId}</td>
-              <td className="py-3 px-4">{user.username}</td>
-              <td className="py-3 px-4">{user.name}</td>
-              <td className="py-3 px-4">{user.email}</td>
-              <td className="py-3 px-4">{user.role}</td>
-              <td className="py-3 px-4 flex justify-center">
-                <button
-                  className="text-green-600 hover:text-green-800 mx-2"
-                  title="Sửa"
-                  onClick={() => handleEditUser(user)}
-                >
-                  <FaEdit />
-                </button>
-                <button
-                  className="text-red-600 hover:text-red-800 mx-2"
-                  title="Xóa"
-                  onClick={() => handleDeleteUser(user._id)}
-                >
-                  <FaTrash />
-                </button>
-                <button
-                  className="text-gray-600 hover:text-gray-800 mx-2"
-                  title={user.locked ? 'Mở khóa' : 'Khóa'}
-                  onClick={() => handleToggleLockUser(user._id)}
-                >
-                  {user.locked ? <FaUnlock /> : <FaLock />}
-                </button>
-              </td>
+          {users.length > 0 ? (
+            users.map(user => (
+              <tr key={user._id} className="border-b border-gray-200 hover:bg-gray-50 transition duration-150 ease-in-out">
+                <td className="py-3 px-4">{user.employeeId}</td>
+                <td className="py-3 px-4">{user.username}</td>
+                <td className="py-3 px-4">{user.name}</td>
+                <td className="py-3 px-4">{user.email}</td>
+                <td className="py-3 px-4">{user.role}</td>
+                <td className="py-3 px-4 flex justify-center">
+                  <button
+                    className="text-green-600 hover:text-green-800 mx-2"
+                    title="Sửa"
+                    onClick={() => handleEditUser(user)}
+                  >
+                    <FaEdit />
+                  </button>
+                  <button
+                    className="text-red-600 hover:text-red-800 mx-2"
+                    title="Xóa"
+                    onClick={() => handleDeleteUser(user._id)}
+                  >
+                    <FaTrash />
+                  </button>
+                  <button
+                    className="text-gray-600 hover:text-gray-800 mx-2"
+                    title={user.locked ? 'Mở khóa' : 'Khóa'}
+                    onClick={() => handleToggleLockUser(user._id)}
+                  >
+                    {user.locked ? <FaUnlock /> : <FaLock />}
+                  </button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="6" className="py-3 px-4 text-center">Không có người dùng nào được tìm thấy.</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
 
-      {/* Modal để tạo mới hoặc chỉnh sửa người dùng */}
       {isModalOpen && (
         <UserFormModal
           isOpen={isModalOpen}
@@ -177,7 +182,7 @@ const UserList = () => {
           initialData={selectedUser}
         />
       )}
-      <ToastContainer /> {/* Hiển thị các thông báo */}
+      <ToastContainer />
     </div>
   );
 };

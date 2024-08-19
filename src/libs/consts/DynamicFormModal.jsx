@@ -21,9 +21,7 @@ const DynamicFormModal = ({ isOpen, onClose, onSave, formFields, contentLabel, i
   const validationSchema = yup.object().shape(
     formFields.reduce((acc, field) => ({
       ...acc,
-      [field.name]: field.name === 'batch'
-        ? yup.string().required(`${field.label} là bắt buộc`)
-        : (field.validation || yup.string().required(`${field.label} là bắt buộc`))
+      [field.name]: (field.validation || yup.string().required(`${field.label} là bắt buộc`))
     }), {})
   );
 
@@ -41,10 +39,6 @@ const DynamicFormModal = ({ isOpen, onClose, onSave, formFields, contentLabel, i
 
   // Handle form submission
   const onSubmit = (data) => {
-    if (data.batch.length > 10) {
-      toast.error('Số lô không được vượt quá 10 ký tự');
-      return;
-    }
     onSave(data);
     onClose();
   };

@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthProvider';
 
 import PrivateRoute from './contexts/PrivateRoute';
+import ProtectedRoute from './contexts/ProtectedRoute'
 import Layout from './components/shared/Layout';
 import Dashboard from './components/Dashboard';
 import ProductPage from './components/ProductPage';
@@ -88,11 +89,13 @@ function App() {
               </Route>
 
               {/* Admin Routes */}
-              <Route path="admin" element={<UserList />}>
-                <Route index element={<UserList />} />
-                <Route path="userlist" element={<UserList />} />
-                <Route path="managenews" element={<ManageNews />} />
-                <Route path="managehelpandsupport" element={<HelpAndSupportManagement />} />
+              <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+                <Route path="admin" element={<UserList />}>
+                  <Route index element={<UserList />} />
+                  <Route path="userlist" element={<UserList />} />
+                  <Route path="managenews" element={<ManageNews />} />
+                  <Route path="managehelpandsupport" element={<HelpAndSupportManagement />} />
+                </Route>
               </Route>
 
               {/* Timesheets Routes */}

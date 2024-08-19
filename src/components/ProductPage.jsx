@@ -1,29 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AiFillEdit, AiFillDelete } from 'react-icons/ai';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import ExportExcelButton from './pages/QC Tool/TP/ExportExcelButton';
-import DynamicFormModal from './pages/QC Tool/TP/DynamicFormModal';
+import axios from 'axios';
+import ExportExcelButton from '../libs/consts/ExportExcelButton';
+import DynamicFormModal from '../libs/consts/DynamicFormModal';
+import FormatDate from '../libs/consts/FormatDate'; // Đảm bảo đường dẫn đúng
 
 const ProductionOrders = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [currentOrderIndex, setCurrentOrderIndex] = useState(null);
+  const [currentOrder, setCurrentOrder] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [productionOrders, setProductionOrders] = useState([
-    {
-      orderCode: 'L001',
-      batch: 'B0012345678',
-      productCode: 'PRD001',
-      productName: 'Sản phẩm A',
-      dosageForm: 'Viên',
-      printedQty: 1000,
-      quantity: 800,
-      unit: 'viên',
-      productDate: '2024-08-16'
-    },
-    // Add more sample data as needed
-  ]);
+  const [productionOrders, setProductionOrders] = useState([]);
 
   const formFields = [
     { name: 'orderCode', label: 'Lệnh sản xuất', placeholder: 'Nhập lệnh sản xuất' },
@@ -37,34 +26,62 @@ const ProductionOrders = () => {
     { name: 'productDate', label: 'Ngày sản xuất', placeholder: 'Chọn ngày sản xuất', type: 'date' }
   ];
 
+  useEffect(() => {
+    fetchProductionOrders();
+  }, []);
+
+  const fetchProductionOrders = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/production-orders');
+      setProductionOrders(response.data);
+    } catch (error) {
+      toast.error('Không thể lấy danh sách đơn hàng sản xuất');
+    }
+  };
+
   const handleAddOrder = () => {
     setIsEditing(false);
-    setCurrentOrderIndex(null);
+    setCurrentOrder(null);
     setIsModalOpen(true);
   };
 
-  const handleEditOrder = (index) => {
+  const handleEditOrder = (order) => {
     setIsEditing(true);
-    setCurrentOrderIndex(index);
+    setCurrentOrder(order);
     setIsModalOpen(true);
   };
 
-  const handleDeleteOrder = (index) => {
-    const newOrders = productionOrders.filter((_, i) => i !== index);
-    setProductionOrders(newOrders);
-    toast.success('Xóa thành công Lệnh sản xuất!');
+  const handleDeleteOrder = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/production-orders/${id}`);
+      setProductionOrders(productionOrders.filter(order => order._id !== id));
+      toast.success('Xóa thành công đơn hàng sản xuất');
+    } catch (error) {
+      toast.error('Không thể xóa đơn hàng sản xuất');
+    }
   };
 
-  const handleSaveOrder = (newOrder) => {
-    if (isEditing && currentOrderIndex !== null) {
-      const updatedOrders = productionOrders.map((order, index) =>
-        index === currentOrderIndex ? newOrder : order
-      );
-      setProductionOrders(updatedOrders);
-      toast.success('Cập nhật Lệnh sản xuất thành công!');
+  const handleSaveOrder = async (newOrder) => {
+    if (isEditing && currentOrder) {
+      try {
+        await axios.put(`http://localhost:5000/api/production-orders/${currentOrder._id}`, newOrder);
+        setProductionOrders(
+          productionOrders.map(order =>
+            order._id === currentOrder._id ? newOrder : order
+          )
+        );
+        toast.success('Cập nhật đơn hàng sản xuất thành công');
+      } catch (error) {
+        toast.error('Không thể cập nhật đơn hàng sản xuất');
+      }
     } else {
-      setProductionOrders([...productionOrders, newOrder]);
-      toast.success('Thêm Lệnh sản xuất thành công!');
+      try {
+        const response = await axios.post('http://localhost:5000/api/production-orders', newOrder);
+        setProductionOrders([...productionOrders, response.data]);
+        toast.success('Thêm đơn hàng sản xuất thành công');
+      } catch (error) {
+        toast.error('Không thể thêm đơn hàng sản xuất');
+      }
     }
     setIsModalOpen(false);
   };
@@ -74,20 +91,22 @@ const ProductionOrders = () => {
   };
 
   const filteredOrders = productionOrders.filter((order) =>
-    Object.values(order).some((value) => value.toString().toLowerCase().includes(searchQuery.toLowerCase()))
+    Object.values(order).some((value) =>
+      value.toString().toLowerCase().includes(searchQuery.toLowerCase())
+    )
   );
 
   return (
     <div className="p-4">
-      {/* Header with buttons */}
       <div className="flex items-center justify-between gap-2 mb-4">
         <div className="flex items-center gap-2">
           <input
             type="text"
-            placeholder="Tên hàng hóa| NCode"
+            placeholder="Tên hàng hóa | NCode"
+            value={searchQuery}
+            onChange={handleSearchChange}
             className="border p-2 rounded-md"
           />
-          <button className="bg-blue-500 text-white px-4 py-2 rounded-md">Tìm kiếm</button>
           <button
             onClick={handleAddOrder}
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
@@ -97,11 +116,13 @@ const ProductionOrders = () => {
         </div>
 
         <div>
-          <ExportExcelButton data={filteredOrders} />
+          <ExportExcelButton 
+            data={filteredOrders} 
+            parentComponentName="ProductionOrders"
+          />
         </div>
       </div>
 
-      {/* Table for displaying production orders */}
       <table className="min-w-full bg-white">
         <thead>
           <tr>
@@ -128,16 +149,18 @@ const ProductionOrders = () => {
               <td className="py-2 px-4 border">{order.printedQty}</td>
               <td className="py-2 px-4 border">{order.quantity}</td>
               <td className="py-2 px-4 border">{order.unit}</td>
-              <td className="py-2 px-4 border">{order.productDate}</td>
+              <td className="py-2 px-4 border">
+                <FormatDate date={order.productDate} /> {/* Sử dụng FormatDate để định dạng ngày */}
+              </td>
               <td className="py-2 px-4 flex flex-center space-x-2">
                 <button
-                  onClick={() => handleEditOrder(index)}
+                  onClick={() => handleEditOrder(order)}
                   className="text-blue-500 hover:underline"
                 >
                   <AiFillEdit />
                 </button>
                 <button
-                  onClick={() => handleDeleteOrder(index)}
+                  onClick={() => handleDeleteOrder(order._id)}
                   className="text-red-500 hover:underline"
                 >
                   <AiFillDelete />
@@ -148,17 +171,15 @@ const ProductionOrders = () => {
         </tbody>
       </table>
 
-      {/* Modal for adding/editing orders */}
       <DynamicFormModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSave={handleSaveOrder}
         formFields={formFields}
         contentLabel={isEditing ? 'Chỉnh sửa Lệnh sản xuất' : 'Thêm Lệnh sản xuất'}
-        initialData={isEditing ? productionOrders[currentOrderIndex] : {}}
+        initialData={isEditing ? currentOrder : {}}
       />
 
-      {/* Toast Container */}
       <ToastContainer />
     </div>
   );
