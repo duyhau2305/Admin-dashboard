@@ -11,8 +11,9 @@ const ProductionOrders = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentOrder, setCurrentOrder] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [tempSearchQuery, setTempSearchQuery] = useState('');
   const [productionOrders, setProductionOrders] = useState([]);
+  const [filteredOrders, setFilteredOrders] = useState([]);
 
   const formFields = [
     { name: 'orderCode', label: 'Lệnh sản xuất', placeholder: 'Nhập lệnh sản xuất' },
@@ -34,6 +35,7 @@ const ProductionOrders = () => {
     try {
       const response = await axios.get('http://localhost:5000/api/production-orders');
       setProductionOrders(response.data);
+      setFilteredOrders(response.data);
     } catch (error) {
       toast.error('Không thể lấy danh sách đơn hàng sản xuất');
     }
@@ -55,6 +57,7 @@ const ProductionOrders = () => {
     try {
       await axios.delete(`http://localhost:5000/api/production-orders/${id}`);
       setProductionOrders(productionOrders.filter(order => order._id !== id));
+      setFilteredOrders(filteredOrders.filter(order => order._id !== id));
       toast.success('Xóa thành công đơn hàng sản xuất');
     } catch (error) {
       toast.error('Không thể xóa đơn hàng sản xuất');
@@ -78,6 +81,7 @@ const ProductionOrders = () => {
       try {
         const response = await axios.post('http://localhost:5000/api/production-orders', newOrder);
         setProductionOrders([...productionOrders, response.data]);
+        setFilteredOrders([...filteredOrders, response.data]);
         toast.success('Thêm đơn hàng sản xuất thành công');
       } catch (error) {
         toast.error('Không thể thêm đơn hàng sản xuất');
@@ -87,14 +91,18 @@ const ProductionOrders = () => {
   };
 
   const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
+    setTempSearchQuery(e.target.value);
   };
 
-  const filteredOrders = productionOrders.filter((order) =>
-    Object.values(order).some((value) =>
-      value.toString().toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  );
+  const handleSearch = () => {
+    setFilteredOrders(
+      productionOrders.filter((order) =>
+        Object.values(order).some((value) =>
+          value.toString().toLowerCase().includes(tempSearchQuery.toLowerCase())
+        )
+      )
+    );
+  };
 
   return (
     <div className="p-4">
@@ -103,21 +111,27 @@ const ProductionOrders = () => {
           <input
             type="text"
             placeholder="Tên hàng hóa | NCode"
-            value={searchQuery}
+            value={tempSearchQuery}
             onChange={handleSearchChange}
             className="border p-2 rounded-md"
           />
           <button
-            onClick={handleAddOrder}
+            onClick={handleSearch}
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
+          >
+            Tìm kiếm
+          </button>
+          <button
+            onClick={handleAddOrder}
+            className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-blue-600 transition"
           >
             Thêm mới
           </button>
         </div>
 
         <div>
-          <ExportExcelButton 
-            data={filteredOrders} 
+          <ExportExcelButton
+            data={filteredOrders}
             parentComponentName="ProductionOrders"
           />
         </div>
@@ -152,20 +166,21 @@ const ProductionOrders = () => {
               <td className="py-2 px-4 border">
                 <FormatDate date={order.productDate} /> {/* Sử dụng FormatDate để định dạng ngày */}
               </td>
-              <td className="py-2 px-4 flex flex-center space-x-2">
-                <button
-                  onClick={() => handleEditOrder(order)}
-                  className="text-blue-500 hover:underline"
-                >
-                  <AiFillEdit />
-                </button>
-                <button
-                  onClick={() => handleDeleteOrder(order._id)}
-                  className="text-red-500 hover:underline"
-                >
-                  <AiFillDelete />
-                </button>
-              </td>
+              <td className="py-2 px-4 text-center border">
+              <button
+                onClick={() => handleEditOrder(order)}
+                className="text-blue-500 hover:underline inline-block align-middle mr-2"
+              >
+                <AiFillEdit />
+              </button>
+              <button
+                onClick={() => handleDeleteOrder(order._id)}
+                className="text-red-500 hover:underline inline-block align-middle"
+              >
+                <AiFillDelete />
+              </button>
+            </td>
+
             </tr>
           ))}
         </tbody>

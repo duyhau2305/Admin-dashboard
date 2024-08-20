@@ -71,10 +71,10 @@ const SubstituteMaterialTable = () => {
             <tr className="bg-gray-100 border-b border-gray-200">
               <th className="py-2 px-4 text-left">STT</th>
               <th className="py-2 px-4 text-left">Trạng thái</th>
-              <th className="py-2 px-4 text-left">NL đang sử dụng</th>
+              <th className="py-2 px-4 text-left whitespace-nowrap">NL đang sử dụng</th>
               <th className="py-2 px-4 text-left">NL thay thế</th>
-              <th className="py-2 px-4 text-left">Mã hàng hóa</th>
-              <th className="py-2 px-4 text-left">Hạn trả kết quả</th>
+              <th className="py-2 px-4 text-left whitespace-nowrap">Mã hàng hóa</th>
+              <th className="py-2 px-4 text-left whitespace-nowrap">Hạn trả kết quả</th>
               <th className="py-2 px-4 text-left">Kết quả</th>
               <th className="py-2 px-4 text-left">Ghi chú</th>
             </tr>

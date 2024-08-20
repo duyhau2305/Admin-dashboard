@@ -13,7 +13,7 @@ import Timsheets from '../pages/Timsheets';
 import UserList from '../pages/Admin/Userlist';
 import MaterialsCatalog from '../MaterialsCatalog';
 import Product3 from '../Product3';
-import SubstituteMaterialTable from '../SubstituteMaterialTable';
+import SubstituteMaterialTable from '../pages/QA/SubstituteMaterialTable';
 import RegistrationTable from '../RegistrationTable';
 import InspectionSheet from '../pages/QC Tool/InspectionSheet';
 import WorkRegistration from '../WorkRegistration';

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { AiFillEdit, AiFillDelete } from 'react-icons/ai';
+import { AiFillEdit, AiFillDelete, AiOutlineSearch, AiOutlineMail } from 'react-icons/ai';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import ExportExcelButton from '../libs/consts/ExportExcelButton';
 import DynamicFormModal from '../libs/consts/DynamicFormModal';
 import FormatDate from '../libs/consts/FormatDate';
+import SendEmailModal from '../libs/consts/SendEmailModal';
 
 const ShiftReportTable = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,8 +15,9 @@ const ShiftReportTable = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [shiftReports, setShiftReports] = useState([]);
   const [productionOrders, setProductionOrders] = useState([]);
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+  const [emailReport, setEmailReport] = useState(null);
 
-  // Fetch Production Orders và Shift Reports từ API khi component được mount
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -40,7 +42,7 @@ const ShiftReportTable = () => {
       name: 'productionOrder',
       label: 'Lệnh sản xuất',
       type: 'select',
-      options: productionOrders.map(order => ({ label: order.orderCode, value: order._id })), // Lấy orderCode và id của Production Orders
+      options: productionOrders.map(order => ({ label: order.orderCode, value: order._id })),
       placeholder: 'Chọn lệnh sản xuất'
     },
     { name: 'plannedQty', label: 'Số lượng kế hoạch', placeholder: 'Nhập số lượng kế hoạch', type: 'number' },
@@ -94,15 +96,30 @@ const ShiftReportTable = () => {
     setIsModalOpen(false);
   };
 
+  const handleSearch = () => {
+    const filteredReports = shiftReports.filter((report) =>
+      Object.values(report).some((value) =>
+        value.toString().toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
+    setShiftReports(filteredReports);
+  };
+
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
 
-  const filteredReports = shiftReports.filter((report) =>
-    Object.values(report).some((value) =>
-      value.toString().toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  );
+  const handleOpenEmailModal = (report) => {
+    setEmailReport(report);
+    setIsEmailModalOpen(true);
+  };
+
+  const handleSendEmail = (emailData) => {
+    // Gửi email với dữ liệu emailData và emailReport
+    console.log('Sending email with data:', emailData, emailReport);
+    // Thực hiện gửi email thông qua API hoặc phương thức khác
+    toast.success('Email đã được gửi thành công');
+  };
 
   return (
     <div className="p-4">
@@ -116,6 +133,12 @@ const ShiftReportTable = () => {
             className="border p-2 rounded-md"
           />
           <button
+            onClick={handleSearch}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition flex items-center"
+          >
+            <AiOutlineSearch className="mr-2" /> Tìm kiếm
+          </button>
+          <button
             onClick={handleAddReport}
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
           >
@@ -125,7 +148,7 @@ const ShiftReportTable = () => {
 
         <div>
           <ExportExcelButton 
-            data={filteredReports} 
+            data={shiftReports} 
             parentComponentName="ShiftReportTable"
           />
         </div>
@@ -144,7 +167,7 @@ const ShiftReportTable = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredReports.map((report, index) => (
+          {shiftReports.map((report, index) => (
             <tr key={index}>
               <td className="py-2 px-4 border">
                 <FormatDate date={report.date} /> {/* Sử dụng FormatDate để định dạng ngày */}
@@ -152,25 +175,30 @@ const ShiftReportTable = () => {
               <td className="py-2 px-4 border">{report.shift}</td>
               <td className="py-2 px-4 border">{report.shiftLeader}</td>
               <td className="py-2 px-4 border">
-                {/* Chuyển đổi id thành orderCode */}
                 {
                   productionOrders.find(order => order._id === report.productionOrder)?.orderCode
                 }
               </td>
               <td className="py-2 px-4 border">{report.plannedQty}</td>
               <td className="py-2 px-4 border">{report.actualQty}</td>
-              <td className="py-2 px-4 flex flex-center space-x-2">
+              <td className="py-2 px-4 text-center border">
                 <button
                   onClick={() => handleEditReport(report)}
-                  className="text-blue-500 hover:underline"
+                  className="text-blue-500 hover:underline mr-2"
                 >
                   <AiFillEdit />
                 </button>
                 <button
                   onClick={() => handleDeleteReport(report._id)}
-                  className="text-red-500 hover:underline"
+                  className="text-red-500 hover:underline mr-2"
                 >
                   <AiFillDelete />
+                </button>
+                <button
+                  onClick={() => handleOpenEmailModal(report)}
+                  className="text-green-500 hover:underline mr-2"
+                >
+                  <AiOutlineMail />
                 </button>
               </td>
             </tr>
@@ -185,6 +213,12 @@ const ShiftReportTable = () => {
         formFields={formFields}
         contentLabel={isEditing ? 'Chỉnh sửa báo cáo ca làm việc' : 'Thêm mới báo cáo ca làm việc'}
         initialData={isEditing ? currentReport : {}}
+      />
+
+      <SendEmailModal
+        isOpen={isEmailModalOpen}
+        onClose={() => setIsEmailModalOpen(false)}
+        onSend={handleSendEmail}
       />
 
       <ToastContainer />

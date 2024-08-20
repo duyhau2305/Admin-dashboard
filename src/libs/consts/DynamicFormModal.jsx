@@ -3,7 +3,7 @@ import Modal from 'react-modal';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { toast } from 'react-toastify';
+
 
 Modal.setAppElement('#root');
 
