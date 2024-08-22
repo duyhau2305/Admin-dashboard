@@ -1,5 +1,6 @@
-import React from 'react';
-
+import React, { useState } from 'react';
+import ExportExcelButton from '../../../libs/consts/ExportExcelButton';
+import DynamicFormModal from '../../../libs/consts/DynamicFormModal';
 const registrations = [
   {
     id: '001',
@@ -25,12 +26,26 @@ const registrations = [
 ];
 
 const RegistrationTable = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editData, setEditData] = useState(null);
+
+  const formFields = [
+    { name: 'registrationNumber', label: 'Số đăng ký', placeholder: 'Nhập số đăng ký' },
+    { name: 'approvalNumber', label: 'Số công bố', placeholder: 'Nhập số công bố' },
+    { name: 'registrationDate', label: 'Ngày đăng ký', type: 'date' },
+    { name: 'expirationDate', label: 'Ngày hết hạn', type: 'date' },
+    { name: 'product', label: 'Sản phẩm', placeholder: 'Nhập sản phẩm' },
+    { name: 'category', label: 'Phân loại', placeholder: 'Nhập phân loại' },
+    { name: 'status', label: 'Trạng thái', placeholder: 'Nhập trạng thái' },
+  ];
+
   const handleSearch = () => {
     console.log('Tìm kiếm');
   };
 
   const handleAddNew = () => {
-    console.log('Thêm mới');
+    setEditData(null); // Clear data for adding new
+    setIsModalOpen(true);
   };
 
   const handleExportExcel = () => {
@@ -38,11 +53,23 @@ const RegistrationTable = () => {
   };
 
   const handleEdit = (id) => {
-    console.log(`Sửa số đăng ký ${id}`);
+    const dataToEdit = registrations.find(reg => reg.id === id);
+    setEditData(dataToEdit);
+    setIsModalOpen(true);
   };
 
   const handleDelete = (id) => {
     console.log(`Xóa số đăng ký ${id}`);
+  };
+
+  const handleSave = (data) => {
+    if (editData) {
+      console.log('Cập nhật số đăng ký', data);
+      // Logic to update the existing record
+    } else {
+      console.log('Thêm mới số đăng ký', data);
+      // Logic to add new record
+    }
   };
 
   return (
@@ -66,12 +93,7 @@ const RegistrationTable = () => {
           Thêm mới
         </button>
         <div className="flex-grow"></div>
-        <button
-          onClick={handleExportExcel}
-          className="bg-yellow-500 text-white px-4 py-2 rounded-md"
-        >
-          Xuất Excel
-        </button>
+        <ExportExcelButton data={registrations} parentComponentName="RegistrationTable" />
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200">
@@ -118,6 +140,14 @@ const RegistrationTable = () => {
           </tbody>
         </table>
       </div>
+      <DynamicFormModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSave}
+        formFields={formFields}
+        contentLabel={editData ? 'Chỉnh sửa số đăng ký' : 'Thêm mới số đăng ký'}
+        initialData={editData || {}}
+      />
     </div>
   );
 };
