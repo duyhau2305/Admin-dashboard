@@ -1,40 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import DynamicFormModal from '../../../libs/consts/DynamicFormModal';
 import ExportExcelButton from '../../../libs/consts/ExportExcelButton';
 import { toast, ToastContainer } from 'react-toastify';
 import { FaEdit, FaTrash } from 'react-icons/fa';
-
-const substituteMaterialsData = [
-  {
-    id: '001',
-    status: 'Đang sử dụng',
-    currentMaterial: 'Nguyên liệu A',
-    substituteMaterial: 'Nguyên liệu X',
-    materialCode: 'X001',
-    dueDate: '2024-08-10',
-    result: 'Đã thay thế thành công',
-    notes: 'Đã xác nhận chất lượng phù hợp',
-  },
-  {
-    id: '002',
-    status: 'Hết hàng',
-    currentMaterial: 'Nguyên liệu B',
-    substituteMaterial: 'Nguyên liệu Y',
-    materialCode: 'Y002',
-    dueDate: '2024-08-12',
-    result: 'Chưa thay thế',
-    notes: 'Chờ xác nhận từ nhà cung cấp',
-  },
-];
+import 'react-toastify/dist/ReactToastify.css';
 
 const SubstituteMaterialTable = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredMaterials, setFilteredMaterials] = useState(substituteMaterialsData);
+  const [materials, setMaterials] = useState([]);
+  const [filteredMaterials, setFilteredMaterials] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMaterial, setEditingMaterial] = useState(null);
 
+  const fetchMaterials = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/substitute-materials');
+      console.log('Fetched materials:', response.data);
+      setMaterials(response.data);
+      setFilteredMaterials(response.data);
+    } catch (error) {
+      console.error('Error fetching materials:', error);
+      toast.error('Lỗi khi tải dữ liệu nguyên liệu!');
+    }
+  };
+
+  useEffect(() => {
+    fetchMaterials();
+  }, []);
+
   const handleSearch = () => {
-    const filtered = substituteMaterialsData.filter(
+    const filtered = materials.filter(
       (item) =>
         item.currentMaterial.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.materialCode.toLowerCase().includes(searchQuery.toLowerCase())
@@ -42,29 +38,51 @@ const SubstituteMaterialTable = () => {
     setFilteredMaterials(filtered);
   };
 
-  const handleAddNewMaterial = (newMaterial) => {
-    if (editingMaterial) {
-      setFilteredMaterials(
-        filteredMaterials.map((item) =>
-          item.id === editingMaterial.id ? { ...newMaterial, id: editingMaterial.id } : item
-        )
-      );
+  const handleAddNewMaterial = async (newMaterial) => {
+    try {
+      if (editingMaterial) {
+        console.log('Updating material:', editingMaterial.id);
+        const response = await axios.put(`http://localhost:5000/api/substitute-materials/${editingMaterial.id}`, newMaterial);
+        console.log('Updated material:', response.data);
+        setMaterials((prevMaterials) => 
+          prevMaterials.map((item) => 
+            item.id === editingMaterial.id ? response.data : item
+          )
+        );
+        toast.success('Cập nhật nguyên liệu thành công!');
+      } else {
+        console.log('Adding new material:', newMaterial);
+        const response = await axios.post('http://localhost:5000/api/substitute-materials', newMaterial);
+        console.log('Added material:', response.data);
+        setMaterials((prevMaterials) => [...prevMaterials, response.data]);
+        toast.success('Thêm nguyên liệu thành công!');
+      }
+      setFilteredMaterials((prevMaterials) => [...prevMaterials, newMaterial]);
       setEditingMaterial(null);
-      toast.success('Cập nhật nguyên liệu thành công!');
-    } else {
-      setFilteredMaterials([...filteredMaterials, { ...newMaterial, id: Date.now().toString() }]);
-      toast.success('Thêm nguyên liệu thành công!');
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error('Error saving material:', error);
+      toast.error('Lỗi khi lưu nguyên liệu!');
     }
   };
 
   const handleEditMaterial = (material) => {
+    console.log('Editing material:', material);
     setEditingMaterial(material);
     setIsModalOpen(true);
   };
 
-  const handleDeleteMaterial = (materialId) => {
-    setFilteredMaterials(filteredMaterials.filter((item) => item.id !== materialId));
-    toast.success('Xóa nguyên liệu thành công!');
+  const handleDeleteMaterial = async (materialId) => {
+    try {
+      console.log('Deleting material with ID:', materialId);
+      await axios.delete(`http://localhost:5000/api/substitute-materials/${materialId}`);
+      setMaterials((prevMaterials) => prevMaterials.filter((item) => item.id !== materialId));
+      setFilteredMaterials((prevMaterials) => prevMaterials.filter((item) => item.id !== materialId));
+      toast.success('Xóa nguyên liệu thành công!');
+    } catch (error) {
+      console.error('Error deleting material:', error);
+      toast.error('Lỗi khi xóa nguyên liệu!');
+    }
   };
 
   return (
@@ -104,8 +122,8 @@ const SubstituteMaterialTable = () => {
               <th className="py-2 px-4 text-center text-xs whitespace-nowrap">NL thay thế</th>
               <th className="py-2 px-4 text-center text-xs whitespace-nowrap">Mã hàng hóa</th>
               <th className="py-2 px-4 text-center text-xs whitespace-nowrap">Hạn trả kết quả</th>
-              <th className="py-2 px-4 text-center text-xs whitespace-nowrap" >Kết quả</th>
-              <th className="py-2 px-4 text-center text-xs ">Ghi chú</th>
+              <th className="py-2 px-4 text-center text-xs whitespace-nowrap">Kết quả</th>
+              <th className="py-2 px-4 text-center text-xs">Ghi chú</th>
               <th className="py-2 px-4 text-center whitespace-nowrap text-xs">Thao tác</th>
             </tr>
           </thead>
