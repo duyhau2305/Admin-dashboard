@@ -1,33 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { FaEdit, FaTrash } from 'react-icons/fa';
 import ExportExcelButton from '../../../libs/consts/ExportExcelButton';
 import DynamicFormModal from '../../../libs/consts/DynamicFormModal';
-const registrations = [
-  {
-    id: '001',
-    registrationNumber: 'QLSP-903-15',
-    approvalNumber: '1901/24/CPC1HN-TC',
-    registrationDate: '2024-01-15',
-    expirationDate: '2025-01-15',
-    product: 'coladin',
-    category: 'Thực phẩm chức năng',
-    status: 'Đã duyệt',
-  },
-  {
-    id: '002',
-    registrationNumber: 'RQLSP-903-15',
-    approvalNumber: '2002/24/CPC1HN-TC',
-    registrationDate: '2024-02-20',
-    expirationDate: '2025-02-20',
-    product: 'Colodin',
-    category: 'Sinh phẩm',
-    status: 'Đã duyệt',
-  },
-  // Thêm các số đăng ký khác ở đây
-];
 
 const RegistrationTable = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editData, setEditData] = useState(null);
+  const [registrations, setRegistrations] = useState([]); // Lưu trữ danh sách đăng ký
+  const [isModalOpen, setIsModalOpen] = useState(false); // Kiểm soát trạng thái modal
+  const [editData, setEditData] = useState(null); // Lưu trữ dữ liệu để chỉnh sửa
 
   const formFields = [
     { name: 'registrationNumber', label: 'Số đăng ký', placeholder: 'Nhập số đăng ký' },
@@ -39,36 +19,54 @@ const RegistrationTable = () => {
     { name: 'status', label: 'Trạng thái', placeholder: 'Nhập trạng thái' },
   ];
 
-  const handleSearch = () => {
-    console.log('Tìm kiếm');
+  // Hàm lấy danh sách đăng ký từ API
+  const fetchRegistrations = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/registrations');
+      setRegistrations(response.data);
+    } catch (error) {
+      console.error('Lỗi khi lấy danh sách đăng ký:', error);
+    }
   };
+
+  useEffect(() => {
+    fetchRegistrations();
+  }, []);
 
   const handleAddNew = () => {
-    setEditData(null); // Clear data for adding new
+    setEditData(null); // Xóa dữ liệu cũ để thêm mới
     setIsModalOpen(true);
-  };
-
-  const handleExportExcel = () => {
-    console.log('Xuất Excel');
   };
 
   const handleEdit = (id) => {
     const dataToEdit = registrations.find(reg => reg.id === id);
-    setEditData(dataToEdit);
+    setEditData(dataToEdit); // Đặt dữ liệu để chỉnh sửa
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id) => {
-    console.log(`Xóa số đăng ký ${id}`);
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`/api/registrations/${id}`);
+      setRegistrations(prevRegistrations => prevRegistrations.filter(reg => reg.id !== id));
+    } catch (error) {
+      console.error('Lỗi khi xóa đăng ký:', error);
+    }
   };
 
-  const handleSave = (data) => {
-    if (editData) {
-      console.log('Cập nhật số đăng ký', data);
-      // Logic to update the existing record
-    } else {
-      console.log('Thêm mới số đăng ký', data);
-      // Logic to add new record
+  const handleSave = async (data) => {
+    try {
+      if (editData) {
+        const response = await axios.put(`http://localhost:5000/api/registrations/${editData.id}`, data);
+        setRegistrations(prevRegistrations => 
+          prevRegistrations.map(reg => reg.id === editData.id ? response.data : reg)
+        );
+      } else {
+        const response = await axios.post('http://localhost:5000/api/registrations', data);
+        setRegistrations(prevRegistrations => [...prevRegistrations, response.data]);
+      }
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error('Lỗi khi lưu đăng ký:', error);
     }
   };
 
@@ -81,7 +79,7 @@ const RegistrationTable = () => {
           className="border py-2 rounded-md px-4"
         />
         <button
-          onClick={handleSearch}
+          onClick={() => console.log('Tìm kiếm')}
           className="bg-blue-500 text-white px-4 py-2 rounded-md"
         >
           Tìm kiếm
@@ -100,13 +98,13 @@ const RegistrationTable = () => {
           <thead>
             <tr className="bg-gray-100 border-b border-gray-200">
               <th className="py-2 px-4 text-left">STT</th>
-              <th className="py-2 px-4 text-left">Số đăng ký</th>
+              <th className="py-2 px-4 text-left whitespace-nowrap">Số đăng ký</th>
               <th className="py-2 px-4 text-left">Số công bố</th>
               <th className="py-2 px-4 text-left">Ngày đăng ký</th>
               <th className="py-2 px-4 text-left">Ngày hết hạn</th>
-              <th className="py-2 px-4 text-left">Sản phẩm</th>
-              <th className="py-2 px-4 text-left">Phân loại</th>
-              <th className="py-2 px-4 text-left">Trạng thái</th>
+              <th className="py-2 px-4 text-left whitespace-nowrap">Sản phẩm</th>
+              <th className="py-2 px-4 text-left whitespace-nowrap">Phân loại</th>
+              <th className="py-2 px-4 text-left whitespace-nowrap">Trạng thái</th>
               <th className="py-2 px-4 text-left">Hành động</th>
             </tr>
           </thead>
@@ -121,18 +119,18 @@ const RegistrationTable = () => {
                 <td className="py-2 px-4">{reg.product}</td>
                 <td className="py-2 px-4">{reg.category}</td>
                 <td className="py-2 px-4">{reg.status}</td>
-                <td className="py-2 px-4 flex space-x-2">
+                <td className="py-2 px-2 text-center">
                   <button
                     onClick={() => handleEdit(reg.id)}
-                    className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                    className="text-blue-500 hover:text-blue-700 mr-2"
                   >
-                    Sửa
+                    <FaEdit />
                   </button>
                   <button
                     onClick={() => handleDelete(reg.id)}
-                    className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                    className="text-red-500 hover:text-red-700"
                   >
-                    Xóa
+                    <FaTrash />
                   </button>
                 </td>
               </tr>
