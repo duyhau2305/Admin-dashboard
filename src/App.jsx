@@ -18,7 +18,7 @@ import UserList from './components/pages/Admin/Userlist';
 import MaterialsCatalog from './components/MaterialsCatalog';
 import SubstituteMaterialTable from './components/pages/QA/SubstituteMaterialTable';
 import RegistrationTable from './components/pages/QA/RegistrationTable';
-import InspectionSheet from './components/pages/QC Tool/InspectionSheet';
+import InspectionSheet from './components/pages/QA/InspectionSheet';
 import WorkRegistration from './components/WorkRegistration';
 import OvertimeRegistration from './components/pages/works/Timextra';
 import News from './components/pages/News';

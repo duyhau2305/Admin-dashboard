@@ -15,7 +15,7 @@ import MaterialsCatalog from '../MaterialsCatalog';
 import Product3 from '../Product3';
 import SubstituteMaterialTable from '../pages/QA/SubstituteMaterialTable';
 import RegistrationTable from '../pages/QA/RegistrationTable';
-import InspectionSheet from '../pages/QC Tool/InspectionSheet';
+import InspectionSheet from '../pages/QA/InspectionSheet';
 import WorkRegistration from '../WorkRegistration';
 import OvertimeRegistration from '../pages/works/Timextra';
 import ManageNews from '../pages/Admin/ManageNews';

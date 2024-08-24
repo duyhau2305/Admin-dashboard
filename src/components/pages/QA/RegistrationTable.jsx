@@ -3,6 +3,7 @@ import axios from 'axios';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import ExportExcelButton from '../../../libs/consts/ExportExcelButton';
 import DynamicFormModal from '../../../libs/consts/DynamicFormModal';
+import FormatDate from '../../../libs/consts/FormatDate';
 
 const RegistrationTable = () => {
   const [registrations, setRegistrations] = useState([]); // Lưu trữ danh sách đăng ký
@@ -114,8 +115,11 @@ const RegistrationTable = () => {
                 <td className="py-2 px-4">{index + 1}</td>
                 <td className="py-2 px-4">{reg.registrationNumber}</td>
                 <td className="py-2 px-4">{reg.approvalNumber}</td>
-                <td className="py-2 px-4">{reg.registrationDate}</td>
-                <td className="py-2 px-4">{reg.expirationDate}</td>
+                <td className="py-2 px-4">
+                <FormatDate date={reg.registrationDate}/> 
+                </td>
+                <td className="py-2 px-4">
+                <FormatDate date={reg.expirationDate}/> </td>
                 <td className="py-2 px-4">{reg.product}</td>
                 <td className="py-2 px-4">{reg.category}</td>
                 <td className="py-2 px-4">{reg.status}</td>

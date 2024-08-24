@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
+import DynamicFormModal from '../../../libs/consts/DynamicFormModal';
+import ExportExcelButton from '../../../libs/consts/ExportExcelButton';
 
 const inspectionSheets = [
+  // Dữ liệu phiếu kiểm nghiệm của bạn ở đây
   {
     id: '001',
     product: '[L00847] Laci-eye - Hộp 20 ống 0.4ml',
@@ -41,20 +44,40 @@ const inspectionSheets = [
     createdBy: 'Vũ Thị Hoa',
     createdAt: '2024-08-01 10:30:00',
   },
-  // Thêm các phiếu kiểm nghiệm khác ở đây
 ];
 
 const InspectionSheet = () => {
-  const handleSendEmail = (id) => {
-    console.log(`Gửi email cho phiếu kiểm nghiệm ${id}`);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Trạng thái mở/đóng modal
+  const [initialData, setInitialData] = useState(null); // Dữ liệu ban đầu cho modal
+
+  // Các trường biểu mẫu
+  const formFields = [
+    { name: 'product', label: 'Sản phẩm', placeholder: 'Nhập tên sản phẩm', type: 'text' },
+    { name: 'productCode', label: 'Mã sản phẩm', placeholder: 'Nhập mã sản phẩm', type: 'text' },
+    { name: 'batchNumber', label: 'Số lô', placeholder: 'Nhập số lô', type: 'text' },
+    { name: 'file', label: 'File', placeholder: 'Chọn file', type: 'text' },
+    { name: 'printed', label: 'Đã in', placeholder: 'Nhập số lượng in', type: 'text' },
+    { name: 'createdBy', label: 'Người tạo', placeholder: 'Nhập tên người tạo', type: 'text' },
+    { name: 'createdAt', label: 'Thời gian tạo', placeholder: 'Chọn thời gian', type: 'datetime-local' },
+  ];
+
+  // Hàm mở modal để tạo phiếu mới
+  const handleCreate = () => {
+    setInitialData(null); // Không có dữ liệu ban đầu khi tạo phiếu mới
+    setIsModalOpen(true);
   };
 
+  // Hàm xử lý khi lưu dữ liệu từ modal
+  const handleSave = (data) => {
+    console.log('Dữ liệu đã lưu:', data);
+    // Thực hiện logic lưu dữ liệu
+  };
+
+  // Hàm xử lý khi người dùng nhấn nút "Sửa"
   const handleEdit = (id) => {
-    console.log(`Sửa phiếu kiểm nghiệm ${id}`);
-  };
-
-  const handleDelete = (id) => {
-    console.log(`Xóa phiếu kiểm nghiệm ${id}`);
+    const sheet = inspectionSheets.find(sheet => sheet.id === id);
+    setInitialData(sheet); // Đặt dữ liệu ban đầu cho modal
+    setIsModalOpen(true);
   };
 
   return (
@@ -72,15 +95,15 @@ const InspectionSheet = () => {
         </button>
         <button
           className="bg-green-500 text-white px-4 py-2 rounded-md"
+          onClick={handleCreate} // Gọi hàm tạo phiếu mới
         >
           Tạo phiếu
         </button>
         <div className="flex-grow"></div>
-        <button
-          className="bg-yellow-500 text-white px-4 py-2 rounded-md"
-        >
-          Xuất Excel
-        </button>
+        <ExportExcelButton
+          data={inspectionSheets} // Dữ liệu cần xuất
+          parentComponentName="InspectionSheets" // Tên của component cha
+        />
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200">
@@ -114,19 +137,13 @@ const InspectionSheet = () => {
                 <td className="py-2 px-4">{sheet.createdAt}</td>
                 <td className="py-2 px-4 flex space-x-2">
                   <button
-                    onClick={() => handleSendEmail(sheet.id)}
-                    className=" bg-green-500 text-white rounded hover:bg-green-600"
-                  >
-                    Gửi Email
-                  </button>
-                  <button
-                    onClick={() => handleEdit(sheet.id)}
+                    onClick={() => handleEdit(sheet.id)} // Gọi hàm xử lý sửa phiếu kiểm nghiệm
                     className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
                   >
                     Sửa
                   </button>
                   <button
-                    onClick={() => handleDelete(sheet.id)}
+                    onClick={() => console.log(`Xóa phiếu kiểm nghiệm ID: ${sheet.id}`)}
                     className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                   >
                     Xóa
@@ -137,6 +154,16 @@ const InspectionSheet = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Modal form động */}
+      <DynamicFormModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSave}
+        formFields={formFields}
+        contentLabel="Phiếu Kiểm Nghiệm"
+        initialData={initialData}
+      />
     </div>
   );
 };
