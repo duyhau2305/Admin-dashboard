@@ -1,39 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, Suspense } from 'react';
 import { useLocation } from 'react-router-dom';
 import Siderbar from './Siderbar';
 import Header from './Header';
-import ProductPage from '../ProductPage';
 import Dashboard from '../Dashboard';
-import MessagePage from '../pages/News';
-import Settings from '../pages/Settings';
-import HelpAndSupport from '../pages/Support/HelpAndSupport';
-import Profile from '../pages/Profile';
-import Product2 from '../Product2';
-import Timsheets from '../pages/Timsheets';
-import UserList from '../pages/Admin/Userlist';
-import MaterialsCatalog from '../MaterialsCatalog';
-import Product3 from '../Product3';
-import SubstituteMaterialTable from '../pages/QA/SubstituteMaterialTable';
-import RegistrationTable from '../pages/QA/RegistrationTable';
-import InspectionSheet from '../pages/QA/InspectionSheet';
-import WorkRegistration from '../WorkRegistration';
-import OvertimeRegistration from '../pages/works/Timextra';
-import ManageNews from '../pages/Admin/ManageNews';
-import HelpAndSupportManagement from '../pages/Support/HelpAndSupportManagement';
 
-// import QCTool from '../pages/QC Tool/QCTool';
-import PhuLieuPage from '../pages/QC Tool/PhuLieuPage';
-import SamplingComponent from '../pages/QC Tool/SamplingComponent';
-import MaterialSamplingComponent from '../pages/QC Tool/MaterialSamplingComponent';
-import ResultPhuLieu from '../pages/QC Tool/ResultPhuLieu';
-import ResultNguyenLieu from '../pages/QC Tool/ResultNguyenLieu';
-import ChemicalTable from '../pages/QC Tool/HC/ChemicalTable';
-import ChemicalEntry from '../pages/QC Tool/HC/ChemicalEntry';
-import ExportChemical from '../pages/QC Tool/HC/ExportChemical';
-import ProductList from '../pages/QC Tool/TP/ProductList';
-import ProductSampling from '../pages/QC Tool/TP/ProductSampling';
-
-
+// Lazy load các component không cần thiết phải tải ngay lập tức
+const ProductPage = React.lazy(() => import('../ProductPage'));
+const MessagePage = React.lazy(() => import('../pages/News'));
+const Settings = React.lazy(() => import('../pages/Settings'));
+const HelpAndSupport = React.lazy(() => import('../pages/Support/HelpAndSupport'));
+const Profile = React.lazy(() => import('../pages/Profile'));
+const Product2 = React.lazy(() => import('../Product2'));
+const Timsheets = React.lazy(() => import('../pages/Timsheets'));
+const UserList = React.lazy(() => import('../pages/Admin/Userlist'));
+const MaterialsCatalog = React.lazy(() => import('../MaterialsCatalog'));
+const Product3 = React.lazy(() => import('../Product3'));
+const SubstituteMaterialTable = React.lazy(() => import('../pages/QA/SubstituteMaterialTable'));
+const RegistrationTable = React.lazy(() => import('../pages/QA/RegistrationTable'));
+const InspectionSheet = React.lazy(() => import('../pages/QA/InspectionSheet'));
+const WorkRegistration = React.lazy(() => import('../WorkRegistration'));
+const OvertimeRegistration = React.lazy(() => import('../pages/works/Timextra'));
+const ManageNews = React.lazy(() => import('../pages/Admin/ManageNews'));
+const HelpAndSupportManagement = React.lazy(() => import('../pages/Support/HelpAndSupportManagement'));
+const PhuLieuPage = React.lazy(() => import('../pages/QC Tool/PhuLieuPage'));
+const SamplingComponent = React.lazy(() => import('../pages/QC Tool/SamplingComponent'));
+const MaterialSamplingComponent = React.lazy(() => import('../pages/QC Tool/MaterialSamplingComponent'));
+const ResultPhuLieu = React.lazy(() => import('../pages/QC Tool/ResultPhuLieu'));
+const ResultNguyenLieu = React.lazy(() => import('../pages/QC Tool/ResultNguyenLieu'));
+const ChemicalTable = React.lazy(() => import('../pages/QC Tool/HC/ChemicalTable'));
+const ChemicalEntry = React.lazy(() => import('../pages/QC Tool/HC/ChemicalEntry'));
+const ExportChemical = React.lazy(() => import('../pages/QC Tool/HC/ExportChemical'));
+const ProductList = React.lazy(() => import('../pages/QC Tool/TP/ProductList'));
+const ProductSampling = React.lazy(() => import('../pages/QC Tool/TP/ProductSampling'));
 
 const routeComponents = {
   '/products': ProductPage,
@@ -57,11 +55,9 @@ const routeComponents = {
   '/qc/qlhc/dmhc': ChemicalTable,
   '/qc/qlhc/nhaphc': ChemicalEntry,
   '/qc/qlhc/xuathc': ExportChemical,
-
   '/qc/qltp': ProductList,
   '/qc/qltp/dmtp': ProductList,
   '/qc/qltp/mautp': ProductSampling,
-
   '/timesheets': Timsheets,
   '/timesheets/timesheet': Timsheets,
   '/timesheets/dangkylamviec': WorkRegistration,
@@ -71,7 +67,6 @@ const routeComponents = {
   '/admin/userlist': UserList,
   '/admin/managenews': ManageNews,
   '/admin/managehelpandsupport': HelpAndSupportManagement,
-
   '/settings': Settings,
   '/support': HelpAndSupport,
   '/profile': Profile,
@@ -85,10 +80,10 @@ function Layout() {
     setSearchQuery(event.target.value);
   };
 
-  const renderContent = () => {
+  const renderContent = useMemo(() => {
     const Component = routeComponents[location.pathname] || Dashboard;
     return <Component searchQuery={searchQuery} />;
-  };
+  }, [location.pathname, searchQuery]);
 
   return (
     <div className="flex h-screen w-screen">
@@ -104,7 +99,9 @@ function Layout() {
         {/* Nội dung chính có thể cuộn theo cả chiều ngang và dọc */}
         <div className="p-2 bg-neutral-200 flex-1 overflow-auto">
           <div className="min-w-[1000px] overflow-x-auto"> {/* Đảm bảo có chiều rộng tối thiểu và cuộn ngang */}
-            {renderContent()}
+            <Suspense fallback={<div>Loading...</div>}>
+              {renderContent}
+            </Suspense>
           </div>
         </div>
       </div>

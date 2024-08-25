@@ -1,6 +1,6 @@
 import { Popover, Transition,Menu } from '@headlessui/react'
 import React, {Fragment} from 'react'
-import { HiOutlineBell, HiOutlineChatAlt, HiOutlineSearch } from 'react-icons/hi'
+import { HiOutlineBell, HiOutlineChatAlt, } from 'react-icons/hi'
 import classNames  from 'classnames'
 import { useNavigate } from 'react-router-dom'
 
@@ -8,13 +8,7 @@ function Header() {
 	const nagvigate =useNavigate();
   return (
     <div className=" bg-neutral-100 h-12 px-4 flex justify-end items-center">
-        {/* <div className="relative">
-            <HiOutlineSearch fontSize={22} className="text-gray-400 absolute top-1/2 -translate-y-1/2 right-1 cursor-pointer"/>
-            <input type="text" 
-            placeholder="Search......" 
-            className="text-sm focus:outline-none active:outline-none h-10 w-[24rem] border border-gray-300 rounded-sm px-4" />
-        </div> */}
-        <div className="flex gap-2 items-center mr-2">
+               <div className="flex gap-2 items-center mr-2">
         <Popover className="relative">
 					{({ open }) => (
 						<>

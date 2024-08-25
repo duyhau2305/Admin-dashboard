@@ -1,113 +1,100 @@
-import React, { useState, useEffect } from 'react';
+import React, { Suspense, useState, useEffect, useCallback } from 'react';
 import { FaEdit, FaTrash, FaLock, FaUnlock, FaPlus } from 'react-icons/fa';
-import UserFormModal from './UserFormModal';
 import { toast, ToastContainer } from 'react-toastify';
 import axios from 'axios';
+
+// Lazy load UserFormModal
+const UserFormModal = React.lazy(() => import('./UserFormModal'));
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
-  // Hàm này sẽ được gọi khi component được mount để lấy danh sách người dùng
   useEffect(() => {
     fetchUsers();
   }, []);
 
-  // Hàm để gọi API lấy danh sách người dùng
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get('http://localhost:5000/api/users', {
         headers: {
-          'Authorization': `Bearer ${token}`, // Sử dụng Bearer token để xác thực
+          Authorization: `Bearer ${token}`,
         },
       });
-      console.log('Danh sách người dùng:', response.data); // Kiểm tra dữ liệu nhận được từ API
-      setUsers(response.data); // Cập nhật state người dùng
+      setUsers(response.data);
     } catch (error) {
-      console.error('Error fetching users:', error);
-      toast.error('Lỗi khi tải danh sách người dùng'); // Hiển thị thông báo lỗi
+      toast.error('Lỗi khi tải danh sách người dùng');
     }
   };
 
-  // Hàm để mở modal tạo mới người dùng
-  const handleCreateUser = () => {
-    setSelectedUser(null); // Đặt selectedUser là null khi tạo mới
-    setIsModalOpen(true); // Mở modal
-  };
+  const handleCreateUser = useCallback(() => {
+    setSelectedUser(null);
+    setIsModalOpen(true);
+  }, []);
 
-  // Hàm để mở modal và chỉnh sửa người dùng
-  const handleEditUser = (user) => {
-    setSelectedUser(user); // Đặt người dùng được chọn
-    setIsModalOpen(true); // Mở modal
-  };
+  const handleEditUser = useCallback((user) => {
+    setSelectedUser(user);
+    setIsModalOpen(true);
+  }, []);
 
-  // Hàm để lưu thông tin người dùng mới hoặc cập nhật người dùng đã tồn tại
   const handleSaveUser = async (data) => {
     try {
       const token = localStorage.getItem('token');
       let response;
       if (selectedUser) {
-        // Nếu có người dùng được chọn, cập nhật thông tin người dùng
         response = await axios.put(`http://localhost:5000/api/users/${selectedUser._id}`, data, {
           headers: {
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
-        setUsers(users.map(user => (user._id === selectedUser._id ? response.data : user))); // Cập nhật danh sách người dùng
+        setUsers(users.map((user) => (user._id === selectedUser._id ? response.data : user)));
         toast.success('Cập nhật người dùng thành công');
       } else {
-        // Nếu không có người dùng được chọn, tạo mới người dùng
         response = await axios.post('http://localhost:5000/api/users', data, {
           headers: {
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
-        setUsers([...users, response.data]); // Thêm người dùng mới vào danh sách
+        setUsers([...users, response.data]);
         toast.success('Tạo người dùng mới thành công');
       }
-      setIsModalOpen(false); // Đóng modal
+      setIsModalOpen(false);
     } catch (error) {
-      console.error('Error saving user:', error.response || error.message);
       toast.error('Lỗi khi lưu người dùng');
     }
   };
 
-  // Hàm để xóa người dùng
-  const handleDeleteUser = async (id) => {
+  const handleDeleteUser = useCallback(async (id) => {
     try {
       const token = localStorage.getItem('token');
       await axios.delete(`http://localhost:5000/api/users/${id}`, {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
-      setUsers(users.filter(user => user._id !== id)); // Xóa người dùng khỏi danh sách
+      setUsers(users.filter((user) => user._id !== id));
       toast.success('Xóa người dùng thành công');
     } catch (error) {
-      console.error('Error deleting user:', error.response || error.message);
       toast.error('Lỗi khi xóa người dùng');
     }
-  };
+  }, [users]);
 
-  // Hàm để khóa/mở khóa người dùng
-  const handleToggleLockUser = async (id) => {
-    const user = users.find(user => user._id === id);
+  const handleToggleLockUser = useCallback(async (id) => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.put(`http://localhost:5000/api/users/${id}/lock`, null, {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
-      setUsers(users.map(user => (user._id === id ? { ...user, locked: !user.locked } : user))); // Cập nhật trạng thái khóa
+      setUsers(users.map((user) => (user._id === id ? { ...user, locked: response.data.locked } : user)));
       toast.success(`Người dùng đã được ${response.data.locked ? 'khóa' : 'mở khóa'}`);
     } catch (error) {
-      console.error('Error toggling user lock:', error.response || error.message);
       toast.error('Lỗi khi thay đổi trạng thái khóa');
     }
-  };
+  }, [users]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -134,7 +121,7 @@ const UserList = () => {
         </thead>
         <tbody>
           {users.length > 0 ? (
-            users.map(user => (
+            users.map((user) => (
               <tr key={user._id} className="border-b border-gray-200 hover:bg-gray-50 transition duration-150 ease-in-out">
                 <td className="py-3 px-4">{user.employeeId}</td>
                 <td className="py-3 px-4">{user.username}</td>
@@ -175,12 +162,14 @@ const UserList = () => {
       </table>
 
       {isModalOpen && (
-        <UserFormModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onSave={handleSaveUser}
-          initialData={selectedUser}
-        />
+        <Suspense fallback={<div>Loading...</div>}>
+          <UserFormModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            onSave={handleSaveUser}
+            initialData={selectedUser}
+          />
+        </Suspense>
       )}
       <ToastContainer />
     </div>

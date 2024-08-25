@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, Suspense } from 'react';
+// Import các thư viện cần thiết
 import { AiFillEdit, AiFillDelete } from 'react-icons/ai';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import ExportExcelButton from '../libs/consts/ExportExcelButton';
-import DynamicFormModal from '../libs/consts/DynamicFormModal';
 import FormatDate from '../libs/consts/FormatDate'; // Đảm bảo đường dẫn đúng
+
+// Sử dụng React.lazy để lazy load DynamicFormModal
+const DynamicFormModal = React.lazy(() => import('../libs/consts/DynamicFormModal'));
 
 const ProductionOrders = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -13,7 +16,7 @@ const ProductionOrders = () => {
   const [currentOrder, setCurrentOrder] = useState(null);
   const [tempSearchQuery, setTempSearchQuery] = useState('');
   const [productionOrders, setProductionOrders] = useState([]);
-  const [filteredOrders, setFilteredOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const formFields = [
     { name: 'orderCode', label: 'Lệnh sản xuất', placeholder: 'Nhập lệnh sản xuất' },
@@ -28,41 +31,47 @@ const ProductionOrders = () => {
   ];
 
   useEffect(() => {
-    fetchProductionOrders();
+    fetchProductionOrders().finally(() => setLoading(false));
   }, []);
 
   const fetchProductionOrders = async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/production-orders');
       setProductionOrders(response.data);
-      setFilteredOrders(response.data);
     } catch (error) {
       toast.error('Không thể lấy danh sách đơn hàng sản xuất');
     }
   };
 
-  const handleAddOrder = () => {
+  const filteredOrders = useMemo(() => {
+    return productionOrders.filter((order) =>
+      Object.values(order).some((value) =>
+        value.toString().toLowerCase().includes(tempSearchQuery.toLowerCase())
+      )
+    );
+  }, [productionOrders, tempSearchQuery]);
+
+  const handleAddOrder = useCallback(() => {
     setIsEditing(false);
     setCurrentOrder(null);
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleEditOrder = (order) => {
+  const handleEditOrder = useCallback((order) => {
     setIsEditing(true);
     setCurrentOrder(order);
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleDeleteOrder = async (id) => {
+  const handleDeleteOrder = useCallback(async (id) => {
     try {
       await axios.delete(`http://localhost:5000/api/production-orders/${id}`);
       setProductionOrders(productionOrders.filter(order => order._id !== id));
-      setFilteredOrders(filteredOrders.filter(order => order._id !== id));
       toast.success('Xóa thành công đơn hàng sản xuất');
     } catch (error) {
       toast.error('Không thể xóa đơn hàng sản xuất');
     }
-  };
+  }, [productionOrders]);
 
   const handleSaveOrder = async (newOrder) => {
     if (isEditing && currentOrder) {
@@ -70,7 +79,7 @@ const ProductionOrders = () => {
         await axios.put(`http://localhost:5000/api/production-orders/${currentOrder._id}`, newOrder);
         setProductionOrders(
           productionOrders.map(order =>
-            order._id === currentOrder._id ? newOrder : order
+            order._id === currentOrder._id ? { ...newOrder, _id: currentOrder._id } : order
           )
         );
         toast.success('Cập nhật đơn hàng sản xuất thành công');
@@ -81,7 +90,6 @@ const ProductionOrders = () => {
       try {
         const response = await axios.post('http://localhost:5000/api/production-orders', newOrder);
         setProductionOrders([...productionOrders, response.data]);
-        setFilteredOrders([...filteredOrders, response.data]);
         toast.success('Thêm đơn hàng sản xuất thành công');
       } catch (error) {
         toast.error('Không thể thêm đơn hàng sản xuất');
@@ -94,15 +102,9 @@ const ProductionOrders = () => {
     setTempSearchQuery(e.target.value);
   };
 
-  const handleSearch = () => {
-    setFilteredOrders(
-      productionOrders.filter((order) =>
-        Object.values(order).some((value) =>
-          value.toString().toLowerCase().includes(tempSearchQuery.toLowerCase())
-        )
-      )
-    );
-  };
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="p-4">
@@ -116,14 +118,8 @@ const ProductionOrders = () => {
             className="border p-2 rounded-md"
           />
           <button
-            onClick={handleSearch}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
-          >
-            Tìm kiếm
-          </button>
-          <button
             onClick={handleAddOrder}
-            className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-blue-600 transition"
+            className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition"
           >
             Thêm mới
           </button>
@@ -167,33 +163,34 @@ const ProductionOrders = () => {
                 <FormatDate date={order.productDate} /> {/* Sử dụng FormatDate để định dạng ngày */}
               </td>
               <td className="py-2 px-4 text-center border">
-              <button
-                onClick={() => handleEditOrder(order)}
-                className="text-blue-500 hover:underline inline-block align-middle mr-2"
-              >
-                <AiFillEdit />
-              </button>
-              <button
-                onClick={() => handleDeleteOrder(order._id)}
-                className="text-red-500 hover:underline inline-block align-middle"
-              >
-                <AiFillDelete />
-              </button>
-            </td>
-
+                <button
+                  onClick={() => handleEditOrder(order)}
+                  className="text-blue-500 hover:underline inline-block align-middle mr-2"
+                >
+                  <AiFillEdit />
+                </button>
+                <button
+                  onClick={() => handleDeleteOrder(order._id)}
+                  className="text-red-500 hover:underline inline-block align-middle"
+                >
+                  <AiFillDelete />
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <DynamicFormModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSave={handleSaveOrder}
-        formFields={formFields}
-        contentLabel={isEditing ? 'Chỉnh sửa Lệnh sản xuất' : 'Thêm Lệnh sản xuất'}
-        initialData={isEditing ? currentOrder : {}}
-      />
+      <Suspense fallback={<div>Loading Modal...</div>}>
+        <DynamicFormModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSave={handleSaveOrder}
+          formFields={formFields}
+          contentLabel={isEditing ? 'Chỉnh sửa Lệnh sản xuất' : 'Thêm Lệnh sản xuất'}
+          initialData={isEditing ? currentOrder : {}}
+        />
+      </Suspense>
 
       <ToastContainer />
     </div>
