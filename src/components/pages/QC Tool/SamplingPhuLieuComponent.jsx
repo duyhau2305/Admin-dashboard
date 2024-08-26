@@ -4,6 +4,7 @@ import ExportExcelButton from '../../../libs/consts/ExportExcelButton';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AiFillEdit, AiFillDelete } from 'react-icons/ai';
+import FormatDate from '../../../libs/consts/FormatDate';
 
 const SamplingComponent = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -137,7 +138,7 @@ const SamplingComponent = () => {
           {filteredItems.map((item, index) => (
             <tr key={item._id}>
               <td className="border px-4 py-2 text-xs">{index + 1}</td>
-              <td className="border px-4 py-2 text-xs">{item.date}</td>
+              <td className="border px-4 py-2 text-xs"><FormatDate date={item.date}/></td>
               <td className="border px-4 py-2 text-xs">{item.user}</td>
               <td className="border px-4 py-2 text-xs">{item.status}</td>
               <td className="border px-4 py-2 text-xs">{item.material}</td>
@@ -145,8 +146,8 @@ const SamplingComponent = () => {
               <td className="border px-4 py-2 text-xs">{item.kNumber}</td>
               <td className="border px-4 py-2 text-xs">{item.weight}</td>
               <td className="border px-4 py-2 text-xs">{item.packaging}</td>
-              <td className="border px-4 py-2 text-xs">{item.productionDate}</td>
-              <td className="border px-4 py-2 text-xs">{item.expiryDate}</td>
+              <td className="border px-4 py-2 text-xs"><FormatDate date={item.productionDate}/></td>
+              <td className="border px-4 py-2 text-xs"><FormatDate date={item.expiryDate}/></td>
               <td className="border px-4 py-2 text-xs">{item.manufacturer}</td>
               <td className="border px-4 py-2 text-xs">{item.supplier}</td>
               <td className="py-2 px-4 text-center border">

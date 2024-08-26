@@ -23,7 +23,7 @@ const OvertimeRegistration = React.lazy(() => import('../pages/works/Timextra'))
 const ManageNews = React.lazy(() => import('../pages/Admin/ManageNews'));
 const HelpAndSupportManagement = React.lazy(() => import('../pages/Support/HelpAndSupportManagement'));
 const PhuLieuPage = React.lazy(() => import('../pages/QC Tool/PhuLieuPage'));
-const SamplingComponent = React.lazy(() => import('../pages/QC Tool/SamplingComponent'));
+const SamplingComponent = React.lazy(() => import('../pages/QC Tool/SamplingPhuLieuComponent'));
 const MaterialSamplingComponent = React.lazy(() => import('../pages/QC Tool/MaterialSamplingComponent'));
 const ResultPhuLieu = React.lazy(() => import('../pages/QC Tool/ResultPhuLieu'));
 const ResultNguyenLieu = React.lazy(() => import('../pages/QC Tool/ResultNguyenLieu'));

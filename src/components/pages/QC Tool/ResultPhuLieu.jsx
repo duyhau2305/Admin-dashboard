@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DynamicFormModal from '../../../libs/consts/DynamicFormModal'; // Adjust the path if needed
 import ExportExcelButton from '../../../libs/consts/ExportExcelButton'; // Adjust the path if needed
 import { toast, ToastContainer } from 'react-toastify';
@@ -6,55 +6,51 @@ import 'react-toastify/dist/ReactToastify.css';
 import { AiFillEdit, AiFillDelete } from 'react-icons/ai';
 
 const ResultPhuLieu = () => {
-  const fakeData = [
-    {
-      id: 1,
-      status: 'Đã nhận',
-      kNumber: 'BB23-362',
-      material: 'Màng Cjel Bone 15g',
-      lotNumber: 'M2',
-      productionDate: '12/08/24',
-      expiryDate: '12/08/25',
-      weight: '40/40 (GAM)',
-      statusSample: 'Nguyên liệu mới',
-      file: 'aa.pdf',
-      resultDate: '12-08-2024',
-      placesample: 'Kho nguyên liệu',
-      user: 'Nguyễn Ngọc Huyền',
-      entryDate: '02-08-2024',
-      action: '',
-    },
-    // Add more items if needed
-  ];
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [initialData, setInitialData] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredData, setFilteredData] = useState(fakeData);
-
-  const formFields = [
-    { name: 'status', label: 'Trạng thái', placeholder: 'Nhập trạng thái', type: 'text' },
-    { name: 'kNumber', label: 'Số K', placeholder: 'Nhập số K', type: 'text' },
-    { name: 'material', label: 'Phụ liệu', placeholder: 'Nhập tên phụ liệu', type: 'text' },
-    { name: 'lotNumber', label: 'Số lô', placeholder: 'Nhập số lô', type: 'text' },
-    { name: 'productionDate', label: 'Ngày sản xuất', placeholder: 'Chọn ngày sản xuất', type: 'date' },
-    { name: 'expiryDate', label: 'Hạn dùng', placeholder: 'Chọn hạn dùng', type: 'date' },
-    { name: 'weight', label: 'Lượng lấy', placeholder: 'Nhập lượng lấy', type: 'text' },
-    { name: 'statusSample', label: 'Tình trạng mẫu', placeholder: 'Nhập tình trạng mẫu', type: 'text' },
-    { name: 'file', label: 'File', placeholder: 'Chọn file', type: 'file' },
-    { name: 'resultDate', label: 'Ngày trả KQ', placeholder: 'Chọn ngày trả KQ', type: 'date' },
-    { name: 'placesample', label: 'Nơi lấy mẫu', placeholder: 'Nhập nơi lấy mẫu', type: 'text' },
-    { name: 'user', label: 'Người lấy', placeholder: 'Nhập người lấy mẫu', type: 'text' },
-    { name: 'entryDate', label: 'Ngày lấy', placeholder: 'Chọn ngày lấy', type: 'date' },
-  ];
+  const [filteredData, setFilteredData] = useState([]);
+  const [kNumberInput, setKNumberInput] = useState('');
 
   const handleSearch = () => {
     const lowercasedSearchTerm = searchTerm.toLowerCase();
-    const filtered = fakeData.filter(item =>
+    const filtered = filteredData.filter(item =>
       item.kNumber.toLowerCase().includes(lowercasedSearchTerm) ||
       item.material.toLowerCase().includes(lowercasedSearchTerm)
     );
     setFilteredData(filtered);
+  };
+
+  const handleKNumberChange = async (event) => {
+    const selectedKNumber = event.target.value;
+    setKNumberInput(selectedKNumber);
+
+    // Fetch the data based on the selected kNumber
+    try {
+      const response = await fetch(`http://localhost:5000/api/laymauphulieu/kNumber/${selectedKNumber}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        setInitialData({
+          kNumber: data.kNumber,
+          material: data.material,
+          lotNumber: data.lotNumber,
+          productionDate: data.productionDate,
+          expiryDate: data.expiryDate,
+          weight: data.weight,
+          user: data.user,
+          status: data.status, // Assuming 'status' is also returned in the response
+          packaging: data.packaging, // Assuming 'packaging' is also returned in the response
+          manufacturer: data.manufacturer,
+          supplier: data.supplier,
+        });
+      } else {
+        toast.error(`Không tìm thấy dữ liệu cho Số K: ${selectedKNumber}`);
+      }
+    } catch (error) {
+      console.error('Error fetching data for kNumber:', error);
+      toast.error('Có lỗi xảy ra khi tải dữ liệu');
+    }
   };
 
   const handleCreate = () => {
@@ -128,34 +124,7 @@ const ResultPhuLieu = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredData.map((item) => (
-            <tr key={item.id}>
-              <td className="border px-1 py-1 text-xs  whitespace-nowrap">{item.id}</td>
-              <td className={`border px-1 py-1 text-xs whitespace-nowrap ${item.status === 'Chưa lấy mẫu' ? 'text-orange-600' : 'text-green-600'}`}>
-                {item.status}
-              </td>
-              <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.kNumber}</td>
-              <td className="border px-1 py-1 text-xs whitespace-nowrap truncate max-w-xs">{item.material}</td>
-              <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.lotNumber}</td>
-              <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.productionDate}</td>
-              <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.expiryDate}</td>
-              <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.weight}</td>
-              <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.statusSample}</td>
-              <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.file}</td>
-              <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.resultDate}</td>
-              <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.placesample}</td>
-              <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.user}</td>
-              <td className="border px-1 py-1 text-xs whitespace-nowrap">{item.entryDate}</td>
-              <td className="border px-1 py-1 text-xs flex gap-2">
-                <button onClick={() => handleEdit(item)}>
-                  <AiFillEdit className="text-blue-500" />
-                </button>
-                <button onClick={() => handleDelete(item.id)}>
-                  <AiFillDelete className="text-red-500" />
-                </button>
-              </td>
-            </tr>
-          ))}
+          {/* Render rows here, assuming filteredData contains the items */}
         </tbody>
       </table>
       <DynamicFormModal
@@ -163,7 +132,28 @@ const ResultPhuLieu = () => {
         onClose={() => setIsModalOpen(false)}
         onSave={handleSave}
         initialData={initialData}
-        formFields={formFields}
+        formFields={[
+          { name: 'status', label: 'Trạng thái', placeholder: 'Nhập trạng thái', type: 'text' },
+          {
+            name: 'kNumber',
+            label: 'Số K',
+            placeholder: 'Nhập số K',
+            type: 'text',
+            value: kNumberInput,
+            onChange: handleKNumberChange,
+          },
+          { name: 'material', label: 'Phụ liệu', placeholder: 'Nhập tên phụ liệu', type: 'text' },
+          { name: 'lotNumber', label: 'Số lô', placeholder: 'Nhập số lô', type: 'text' },
+          { name: 'productionDate', label: 'Ngày sản xuất', placeholder: 'Chọn ngày sản xuất', type: 'date' },
+          { name: 'expiryDate', label: 'Hạn dùng', placeholder: 'Chọn hạn dùng', type: 'date' },
+          { name: 'weight', label: 'Lượng lấy', placeholder: 'Nhập lượng lấy', type: 'text' },
+          { name: 'statusSample', label: 'Tình trạng mẫu', placeholder: 'Nhập tình trạng mẫu', type: 'text' },
+          { name: 'file', label: 'File', placeholder: 'Chọn file', type: 'file' },
+          { name: 'resultDate', label: 'Ngày trả KQ', placeholder: 'Chọn ngày trả KQ', type: 'date' },
+          { name: 'placesample', label: 'Nơi lấy mẫu', placeholder: 'Nhập nơi lấy mẫu', type: 'text' },
+          { name: 'user', label: 'Người lấy', placeholder: 'Nhập người lấy mẫu', type: 'text' },
+          { name: 'entryDate', label: 'Ngày lấy', placeholder: 'Chọn ngày lấy', type: 'date' },
+        ]}
       />
       <ToastContainer />
     </div>

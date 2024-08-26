@@ -24,7 +24,7 @@ import OvertimeRegistration from './components/pages/works/Timextra';
 import News from './components/pages/News';
 import HelpAndSupportManagement from './components/pages/Support/HelpAndSupportManagement';
 import PhuLieuCatalog from './components/pages/QC Tool/PhuLieuPage';
-import SamplingComponent from './components/pages/QC Tool/SamplingComponent';
+import SamplingComponent from './components/pages/QC Tool/SamplingPhuLieuComponent';
 import MaterialSamplingComponent from './components/pages/QC Tool/MaterialSamplingComponent';
 import ResultPhuLieu from './components/pages/QC Tool/ResultPhuLieu';
 import ResultNguyenLieu from './components/pages/QC Tool/ResultNguyenLieu';
