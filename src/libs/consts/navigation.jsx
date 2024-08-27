@@ -117,9 +117,9 @@ import {
 	},
 
 	{
-	  key: 'messages',
+	  key: 'news',
 	  label: 'Tin tức nội bộ',
-	  path: '/messages',
+	  path: '/news',
 	  icon: <HiOutlineAnnotation />,
 	  subMenu: []
 	},

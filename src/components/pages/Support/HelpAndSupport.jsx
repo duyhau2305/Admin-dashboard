@@ -1,29 +1,62 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "react-modal"; // Import React Modal
+import { FaEdit, FaTrash } from "react-icons/fa"; // Import các icon
 
 const HelpAndSupport = () => {
   const [issue, setIssue] = useState("");
   const [priority, setPriority] = useState("Normal");
   const [description, setDescription] = useState("");
-  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false); // Thêm state cho modal
-  const [supportRequests, setSupportRequests] = useState([]); // Thêm state để lưu trữ yêu cầu hỗ trợ
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [supportRequests, setSupportRequests] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentEditIndex, setCurrentEditIndex] = useState(null);
+
+  // Load data from localStorage when component mounts
+  useEffect(() => {
+    const storedRequests = JSON.parse(localStorage.getItem("supportRequests")) || [];
+    setSupportRequests(storedRequests);
+  }, []);
+
+  // Update localStorage whenever supportRequests changes
+  useEffect(() => {
+    localStorage.setItem("supportRequests", JSON.stringify(supportRequests));
+  }, [supportRequests]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Gửi yêu cầu hỗ trợ đến server hoặc xử lý tùy ý
-    console.log("Đã gửi yêu cầu hỗ trợ:", { issue, priority, description });
 
-    // Lưu trữ yêu cầu hỗ trợ vào danh sách
-    const newRequest = { issue, priority, description };
-    setSupportRequests([...supportRequests, newRequest]);
+    if (isEditing && currentEditIndex !== null) {
+      // Update the existing request
+      const updatedRequests = supportRequests.map((request, index) =>
+        index === currentEditIndex ? { issue, priority, description } : request
+      );
+      setSupportRequests(updatedRequests);
+      setIsEditing(false);
+      setCurrentEditIndex(null);
+    } else {
+      // Add new request
+      const newRequest = { issue, priority, description };
+      setSupportRequests([...supportRequests, newRequest]);
+    }
 
-    // Mở modal thành công sau khi xử lý yêu cầu
     setIsSuccessModalOpen(true);
-
-    // Xóa dữ liệu sau khi đã gửi yêu cầu
     setIssue("");
     setPriority("Normal");
     setDescription("");
+  };
+
+  const handleEdit = (index) => {
+    const request = supportRequests[index];
+    setIssue(request.issue);
+    setPriority(request.priority);
+    setDescription(request.description);
+    setIsEditing(true);
+    setCurrentEditIndex(index);
+  };
+
+  const handleDelete = (index) => {
+    const updatedRequests = supportRequests.filter((_, i) => i !== index);
+    setSupportRequests(updatedRequests);
   };
 
   return (
@@ -76,7 +109,7 @@ const HelpAndSupport = () => {
             className="bg-emerald-400 text-white py-2 px-4 rounded-full hover:bg-blue-600"
             type="submit"
           >
-            Gửi yêu cầu
+            {isEditing ? "Cập nhật yêu cầu" : "Gửi yêu cầu"}
           </button>
         </div>
       </form>
@@ -88,7 +121,7 @@ const HelpAndSupport = () => {
         className="modal"
         overlayClassName="modal-overlay"
       >
-        <h2 className="text-xl font-bold mb-4">Yêu cầu của bạn đã được gửi thành công!</h2>
+        <h2 className="text-xl font-bold mb-4">Yêu cầu của bạn đã được {isEditing ? "cập nhật" : "gửi"} thành công!</h2>
         <p>Cảm ơn bạn đã liên hệ với chúng tôi. Chúng tôi sẽ xử lý yêu cầu của bạn trong thời gian sớm nhất.</p>
         <button
           className="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-600 mt-4"
@@ -99,29 +132,42 @@ const HelpAndSupport = () => {
       </Modal>
 
       {/* Hiển thị danh sách yêu cầu hỗ trợ */}
-      {supportRequests.length > 0 && (
-        <div className="mt-8">
-          <h2 className="text-xl font-bold mb-4">Danh sách yêu cầu hỗ trợ</h2>
-          <table className="w-full border-collapse border border-gray-300">
-            <thead>
-              <tr>
-                <th className="border border-gray-300 px-4 py-2">Loại vấn đề</th>
-                <th className="border border-gray-300 px-4 py-2">Mức độ ưu tiên</th>
-                <th className="border border-gray-300 px-4 py-2">Mô tả chi tiết</th>
+      <div className="mt-8">
+        <h2 className="text-xl font-bold mb-4">Danh sách yêu cầu hỗ trợ</h2>
+        <table className="w-full border-collapse border border-gray-300">
+          <thead>
+            <tr>
+              <th className="border border-gray-300 px-4 py-2">Loại vấn đề</th>
+              <th className="border border-gray-300 px-4 py-2">Mức độ ưu tiên</th>
+              <th className="border border-gray-300 px-4 py-2">Mô tả chi tiết</th>
+              <th className="border border-gray-300 px-4 py-2">Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            {supportRequests.map((request, index) => (
+              <tr key={index}>
+                <td className="border border-gray-300 px-4 py-2">{request.issue}</td>
+                <td className="border border-gray-300 px-4 py-2">{request.priority}</td>
+                <td className="border border-gray-300 px-4 py-2">{request.description}</td>
+                <td className="border border-gray-300 px-4 py-2 text-center">
+                  <button
+                    className="text-blue-500 hover:underline mr-2"
+                    onClick={() => handleEdit(index)}
+                  >
+                    <FaEdit className="inline-block text-lg" /> {/* Icon sửa */}
+                  </button>
+                  <button
+                    className="text-red-500 hover:underline"
+                    onClick={() => handleDelete(index)}
+                  >
+                    <FaTrash className="inline-block text-lg" /> {/* Icon xóa */}
+                  </button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {supportRequests.map((request, index) => (
-                <tr key={index}>
-                  <td className="border border-gray-300 px-4 py-2">{request.issue}</td>
-                  <td className="border border-gray-300 px-4 py-2">{request.priority}</td>
-                  <td className="border border-gray-300 px-4 py-2">{request.description}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

@@ -1,71 +1,86 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const ManageNews = () => {
-  const [newsData, setNewsData] = useState([
-    { id: 1, title: "Thông báo tuyển dụng", content: "Thông báo tuyển dụng Trưởng phòng Tổ chức Hành chính ..." },
-    { id: 2, title: "Danh sách Cổ đông Nhà nước, Cổ đông lớn 6 tháng đầu năm 2024", content: "Danh sách Cổ đông Nhà nước, Cổ đông lớn 6 tháng đầu năm 202..." },
-    // Thêm các tin tức khác
-  ]);
-
+  const [newsData, setNewsData] = useState([]);
   const [editId, setEditId] = useState(null);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Fetch news data from API
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/news'); // Gọi API để lấy dữ liệu tin tức
+        setNewsData(response.data);
+      } catch (error) {
+        console.error('Error fetching news:', error);
+      }
+    };
+    fetchNews();
+  }, []);
+
   const handleEdit = (news) => {
-    setEditId(news.id);
+    setEditId(news._id); // Lưu trữ id từ MongoDB
     setTitle(news.title);
     setContent(news.content);
-    setIsModalOpen(true); // Open the modal when editing
+    setIsModalOpen(true);
   };
 
-  const handleSave = () => {
-    if (editId === null) {
-      // Add new news
-      const newNews = {
-        id: newsData.length + 1, // Generate a new ID based on the length of the array
-        title,
-        content
-      };
-      setNewsData([...newsData, newNews]);
-    } else {
-      // Update existing news
-      const updatedNews = newsData.map(news => {
-        if (news.id === editId) {
-          return { ...news, title, content };
-        }
-        return news;
-      });
-      setNewsData(updatedNews);
+  const handleSave = async () => {
+    try {
+      if (editId === null) {
+        // Add new news
+        const response = await axios.post('http://localhost:5000/api/news', { title, content });
+        setNewsData([...newsData, response.data]);
+      } else {
+        // Update existing news
+        const response = await axios.put(`http://localhost:5000/api/news/${editId}`, { title, content });
+        const updatedNews = newsData.map(news => {
+          if (news._id === editId) {
+            return response.data;
+          }
+          return news;
+        });
+        setNewsData(updatedNews);
+      }
+
+      // Reset states and close modal
+      setEditId(null);
+      setTitle('');
+      setContent('');
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error('Error saving news:', error);
     }
-
-    // Reset states and close modal
-    setEditId(null);
-    setTitle('');
-    setContent('');
-    setIsModalOpen(false);
   };
 
-  const handleDelete = (id) => {
-    setNewsData(newsData.filter(news => news.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/news/${id}`);
+      setNewsData(newsData.filter(news => news._id !== id));
+    } catch (error) {
+      console.error('Error deleting news:', error);
+    }
   };
 
   const handleAddNew = () => {
     setEditId(null);
     setTitle('');
     setContent('');
-    setIsModalOpen(true); // Open the modal when adding new news
+    setIsModalOpen(true);
   };
 
   return (
     <div className="admin-panel">
       <h1 className="text-3xl font-bold text-center my-4">Quản Lý Tin Tức</h1>
       {newsData.map(news => (
-        <div key={news.id} className="bg-white p-4 mb-4 rounded shadow">
+        <div key={news._id} className="bg-white p-4 mb-4 rounded shadow">
           <h2 className="text-xl font-semibold">{news.title}</h2>
           <p>{news.content}</p>
           <button onClick={() => handleEdit(news)} className="bg-yellow-500 text-white px-4 py-2 rounded mr-2 hover:bg-yellow-600">Sửa</button>
-          <button onClick={() => handleDelete(news.id)} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">Xóa</button>
+          <button onClick={() => handleDelete(news._id)} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">Xóa</button>
         </div>
       ))}
       <button onClick={handleAddNew} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">Thêm Tin Mới</button>

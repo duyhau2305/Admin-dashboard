@@ -4,9 +4,10 @@ import Siderbar from './Siderbar';
 import Header from './Header';
 import Dashboard from '../Dashboard';
 
-// Lazy load các component không cần thiết phải tải ngay lập tức
+// Lazy load các component
 const ProductPage = React.lazy(() => import('../ProductPage'));
-const MessagePage = React.lazy(() => import('../pages/News'));
+const News= React.lazy(() => import('../pages/News'));
+const NewsDetail= React.lazy(() => import('../NewsDetail'));
 const Settings = React.lazy(() => import('../pages/Settings'));
 const HelpAndSupport = React.lazy(() => import('../pages/Support/HelpAndSupport'));
 const Profile = React.lazy(() => import('../pages/Profile'));
@@ -62,7 +63,7 @@ const routeComponents = {
   '/timesheets/timesheet': Timsheets,
   '/timesheets/dangkylamviec': WorkRegistration,
   '/timesheets/dangkythemgio': OvertimeRegistration,
-  '/messages': MessagePage,
+  '/news': News,
   '/admin': UserList,
   '/admin/userlist': UserList,
   '/admin/managenews': ManageNews,
@@ -81,6 +82,12 @@ function Layout() {
   };
 
   const renderContent = useMemo(() => {
+    // Kiểm tra nếu đường dẫn là /news/:id
+    if (location.pathname.startsWith('/news/') && location.pathname.split('/').length === 3) {
+      return <NewsDetail />;
+    }
+
+    // Lấy component tương ứng với pathname hoặc trả về Dashboard nếu không khớp
     const Component = routeComponents[location.pathname] || Dashboard;
     return <Component searchQuery={searchQuery} />;
   }, [location.pathname, searchQuery]);

@@ -34,6 +34,7 @@ import ExportChemical from './components/pages/QC Tool/HC/ExportChemical';
 import ProductList from './components/pages/QC Tool/TP/ProductList';
 import ProductSampling from './components/pages/QC Tool/TP/ProductSampling';
 import ManageNews from './components/pages/Admin/ManageNews';
+import NewsDetail from './components/NewsDetail';
 
 function App() {
   return (
@@ -107,7 +108,8 @@ function App() {
               </Route>
 
               {/* Other Routes */}
-              <Route path="messages" element={<News />} />
+              <Route path="news" element={<News />} />
+              <Route path="/news/:id" component={<NewsDetail />} />
               <Route path="settings" element={<Settings />} />
               <Route path="support" element={<HelpAndSupport />} />
               <Route path="profile" element={<Profile />} />

@@ -1,29 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom'; // Giả sử bạn đang sử dụng React Router
 
 const News = () => {
-  const newsData = [
-    { id: 1, title: "Thông báo tuyển dụng", content: "Thông báo tuyển dụng Trưởng phòng Tổ chức Hành chính ..." },
-    { id: 2, title: "Danh sách Cổ đông Nhà nước, Cổ đông lớn 6 tháng đầu năm 2024", content: "Danh sách Cổ đông Nhà nước, Cổ đông lớn 6 tháng đầu năm 202..." },
-    { id: 3, title: "Lễ ký kết Biên bản ghi nhớ giữa Công ty cổ phần Dược phẩm WinPharma và Công ty TNHH Zavod Medsintez", content: "Sáng ngày 27/6/2023 tại trụ sở Công ty cổ phần Dược phẩm WinPharma đã diễn ra lễ ký kết Biên bản ghi nhớ (MOU) giữa Công ty cổ phần Dược phẩm  WinPharma và Công ty TNHH Zavod Medsintez (Medsintez)..." },
-    { id: 4, title: "Tin tức 4", content: "Nội dung tin tức 4..." },
-    { id: 5, title: "Tin tức 5", content: "Nội dung tin tức 5..." },
-    { id: 6, title: "Tin tức 6", content: "Nội dung tin tức 6..." },
-    { id: 7, title: "Tin tức 7", content: "Nội dung tin tức 7..." },
-    { id: 8, title: "Tin tức 8", content: "Nội dung tin tức 8..." },
-    // Thêm nhiều tin tức hơn nếu cần
-  ];
+  const [newsData, setNewsData] = useState([]); // State để lưu trữ dữ liệu tin tức
+  const [currentPage, setCurrentPage] = useState(1); // State để quản lý trang hiện tại
+  const [loading, setLoading] = useState(true); // State để quản lý trạng thái tải dữ liệu
+  const [error, setError] = useState(null); // State để lưu trữ lỗi nếu có
 
-  const itemsPerPage = 3; // Number of news items per page
-  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3; // Số lượng tin tức mỗi trang
+  const totalPages = Math.ceil(newsData.length / itemsPerPage); // Tổng số trang dựa trên số tin tức
 
-  const totalPages = Math.ceil(newsData.length / itemsPerPage);
+  // Gọi API để lấy dữ liệu tin tức khi component được mount
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/news'); // Thay URL bằng URL API thực tế
+        setNewsData(response.data);
+      } catch (error) {
+        setError('Có lỗi xảy ra khi tải tin tức'); // Xử lý lỗi
+      } finally {
+        setLoading(false); // Kết thúc trạng thái tải dữ liệu
+      }
+    };
 
+    fetchNews();
+  }, []);
+
+  // Xử lý chuyển trang
   const handlePageChange = (page) => {
-    if (page < 1 || page > totalPages) return; // Prevent invalid page numbers
+    if (page < 1 || page > totalPages) return; // Ngăn chuyển đến trang không hợp lệ
     setCurrentPage(page);
   };
 
+  // Hàm để cắt ngắn nội dung tin tức
+  const truncateContent = (content, length) => {
+    return content.length > length ? content.substring(0, length) + '...' : content;
+  };
+
+  // Tính toán các tin tức hiện tại dựa trên trang
   const currentNews = newsData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  // Kiểm tra trạng thái tải dữ liệu và lỗi
+  if (loading) {
+    return <div className="flex justify-center items-center min-h-screen">Đang tải tin tức...</div>;
+  }
+
+  if (error) {
+    return <div className="flex justify-center items-center min-h-screen text-red-500">{error}</div>;
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -32,9 +57,14 @@ const News = () => {
       </header>
       <main className="flex-grow p-6">
         {currentNews.map(news => (
-          <div key={news.id} className="bg-white p-6 mb-6 rounded-lg shadow-lg transition-transform transform hover:scale-105">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-3">{news.title}</h2>
-            <p className="text-gray-600">{news.content}</p>
+          <div key={news._id} className="bg-white p-6 mb-6 rounded-lg shadow-lg transition-transform transform hover:scale-105">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-3">
+              <Link to={`/news/${news._id}`} className="hover:underline">
+                {news.title}
+              </Link>
+            </h2>
+            <p className="text-gray-600">{truncateContent(news.content, 100)}</p> {/* Cắt ngắn nội dung tin tức */}
+            <Link to={`/news/${news._id}`} className="text-blue-500 hover:underline mt-2 inline-block">Đọc thêm</Link>
           </div>
         ))}
         <div className="flex justify-center mt-6">
