@@ -152,24 +152,8 @@ const ResultNguyenLieu = () => {
             <th className="border px-1 py-1 text-xs">Nơi lấy mẫu</th>
             <th className="border px-1 py-1 text-xs">Người lấy</th>
             <th className="border px-1 py-1 text-xs">Ngày lấy</th>
-            <th className="py-2 px-2 text-center border">
-              {filteredData.map((item) => (
-                <div key={item._id}>
-                  <button
-                    className="text-blue-500"
-                    onClick={() => openModal(item)}
-                  >
-                    <FaEdit />
-                  </button>
-                  <button
-                    className="text-red-500"
-                    onClick={() => handleDelete(item._id)}
-                  >
-                    <FaTrash />
-                  </button>
-                </div>
-              ))}
-            </th>
+            <th className="border px-1 py-1 text-xs">Action</th>
+           
           </tr>
         </thead>
         <tbody>
@@ -189,15 +173,15 @@ const ResultNguyenLieu = () => {
               <td className="border px-1 py-1 text-xs">{item.placesample}</td>
               <td className="border px-1 py-1 text-xs">{item.user}</td>
               <td className="border px-1 py-1 text-xs">{item.entryDate}</td>
-              <td className="py-2 px-2 text-center border">
+              <td className="py-2 px-2 text-center border whitespace-nowrap">
                 <button
-                  className="text-blue-500"
+                  className="text-blue-500 text-xs mr-2"
                   onClick={() => openModal(item)}
                 >
                   <FaEdit />
                 </button>
                 <button
-                  className="text-red-500"
+                  className="text-red-500 text-xs"
                   onClick={() => handleDelete(item._id)}
                 >
                   <FaTrash />

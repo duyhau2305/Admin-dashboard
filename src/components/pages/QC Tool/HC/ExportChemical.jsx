@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { FaEdit, FaTrashAlt } from 'react-icons/fa';
+import DynamicFormModal from '../../../../libs/consts/DynamicFormModal';
+import ExportExcelButton from '../../../../libs/consts/ExportExcelButton';
 
 function ExportChemical() {
-  const exportData = [
+  const [exportData, setExportData] = useState([
     {
       id: 1,
       status: 'Đã xuất',
@@ -27,11 +30,39 @@ function ExportChemical() {
       exportDate: '08/08/2024',
     },
     // Add more export data here...
-  ];
+  ]);
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  const openModal = (item = null) => {
+    setSelectedItem(item);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedItem(null);
+  };
+
+  const handleSave = (formData) => {
+    if (selectedItem) {
+      setExportData(
+        exportData.map((item) => (item.id === selectedItem.id ? { ...formData, id: item.id } : item))
+      );
+    } else {
+      setExportData([...exportData, { ...formData, id: exportData.length + 1 }]);
+    }
+    closeModal();
+  };
+
+  const handleDelete = (id) => {
+    setExportData(exportData.filter((item) => item.id !== id));
+  };
 
   return (
     <div className="container mx-auto mt-5">
-       <div className="sticky top-0 bg-white z-10 p-2">
+      <div className="top-0 bg-white z-10 p-2">
         <div className="flex items-center gap-2 mb-2">
           <input
             type="text"
@@ -39,9 +70,14 @@ function ExportChemical() {
             className="border p-1 rounded-md text-sm px-2"
           />
           <button className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm">Tìm kiếm</button>
-          <button className="bg-green-500 text-white px-3 py-1 rounded-md text-sm">Xuất HC</button>
+          <button
+            className="bg-green-500 text-white px-3 py-1 rounded-md text-sm"
+            onClick={() => openModal()}
+          >
+            Xuất HC
+          </button>
           <div className="flex-grow"></div>
-          <button className="bg-yellow-500 text-white px-3 py-1 rounded-md text-xs">Xuất Excel</button>
+          <ExportExcelButton data={exportData} parentComponentName="ExportChemical" />
         </div>
       </div>
 
@@ -58,6 +94,7 @@ function ExportChemical() {
             <th className="p-2 text-xs">Ghi chú</th>
             <th className="p-2 text-xs">Người Xuất</th>
             <th className="p-2 text-xs">Ngày Xuất</th>
+            <th className="p-2 text-xs">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -73,10 +110,37 @@ function ExportChemical() {
               <td className="p-2 text-xs">{item.notes}</td>
               <td className="p-2 text-xs">{item.exportedBy}</td>
               <td className="p-2 text-xs">{item.exportDate}</td>
+              <td className="p-2 flex space-x-2">
+                <button className="text-blue-500" onClick={() => openModal(item)}>
+                  <FaEdit />
+                </button>
+                <button className="text-red-500" onClick={() => handleDelete(item.id)}>
+                  <FaTrashAlt />
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      <DynamicFormModal
+        isOpen={modalOpen}
+        onClose={closeModal}
+        onSave={handleSave}
+        formFields={[
+          { name: 'status', label: 'Trạng thái' },
+          { name: 'tag', label: 'Tem' },
+          { name: 'chemicalName', label: 'Tên Hóa Chất' },
+          { name: 'batch', label: 'Số lô' },
+          { name: 'quantity', label: 'Lượng Xuất' },
+          { name: 'unit', label: 'Đơn vị tính' },
+          { name: 'notes', label: 'Ghi chú' },
+          { name: 'exportedBy', label: 'Người Xuất' },
+          { name: 'exportDate', label: 'Ngày Xuất', type: 'date' },
+        ]}
+        contentLabel={selectedItem ? 'Chỉnh sửa xuất hóa chất' : 'Thêm mới xuất hóa chất'}
+        initialData={selectedItem}
+      />
     </div>
   );
 }

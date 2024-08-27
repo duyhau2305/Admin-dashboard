@@ -1,43 +1,79 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
+import axios from 'axios';
+import DynamicFormModal from '../../../../libs/consts/DynamicFormModal';
+import ExportExcelButton from '../../../../libs/consts/ExportExcelButton';
 
 function ChemicalEntry() {
-  const chemicals = [
-    {
-      id: 1,
-      date: '10/08/2024',
-      enteredBy: 'Trần Thu Hà',
-      status: 'Mới tạo',
-      chemicalName: '[126456] IHeart 5',
-      batch: 'HX30686110',
-      quantity: '3500 (ML)',
-      unitPrice: '1 (Chai)',
-      totalPrice: '1,440,000 đ',
-      VAT: 10,
-      warehouse: '01010',
-      manufacturer: 'Công ty TNHH Thương Mại KHC',
-      country: 'Đức',
-    },
-    {
-      id: 2,
-      date: '07/08/2024',
-      enteredBy: 'Trần Thu Hà',
-      status: 'Mới tạo',
-      chemicalName: '[B01733] Bản mỏng Silicagel G254',
-      batch: 'HX30688234',
-      quantity: '3 (Hộp)',
-      unitPrice: '3,288,000 đ',
-      VAT: 10,
-      warehouse: '01010',
-      manufacturer: 'Merck',
-      country: 'Đức',
-    },
-    // Add more chemical entries here...
-  ];
+  const [chemicals, setChemicals] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedChemical, setSelectedChemical] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch data from API
+  useEffect(() => {
+    axios.get('http://localhost:5000/api/chemical-entries')
+      .then(response => {
+        setChemicals(response.data);
+        setLoading(false);
+      })
+      .catch(error => {
+        setError(error.message);
+        setLoading(false);
+      });
+  }, []);
+
+  const openModal = (chemical = null) => {
+    setSelectedChemical(chemical);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedChemical(null);
+  };
+
+  const handleSave = (formData) => {
+    if (selectedChemical) {
+      axios.put(`http://localhost:5000/api/chemical-entries/${selectedChemical._id}`, formData)
+        .then(response => {
+          setChemicals(
+            chemicals.map((chem) => (chem._id === selectedChemical._id ? response.data : chem))
+          );
+          closeModal();
+        })
+        .catch(error => {
+          setError(error.message);
+        });
+    } else {
+      axios.post('http://localhost:5000/api/chemical-entries', formData)
+        .then(response => {
+          setChemicals([...chemicals, response.data]);
+          closeModal();
+        })
+        .catch(error => {
+          setError(error.message);
+        });
+    }
+  };
+
+  const handleDelete = (id) => {
+    axios.delete(`http://localhost:5000/api/chemical-entries/${id}`)
+      .then(() => {
+        setChemicals(chemicals.filter((chem) => chem._id !== id));
+      })
+      .catch(error => {
+        setError(error.message);
+      });
+  };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="container mx-auto mt-5">
-      <div className="sticky top-0 bg-white z-10 p-2">
+      <div className="top-0 bg-white z-10 p-2">
         <div className="flex items-center gap-2 mb-2">
           <input
             type="text"
@@ -45,9 +81,14 @@ function ChemicalEntry() {
             className="border p-1 rounded-md text-sm px-2"
           />
           <button className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm">Tìm kiếm</button>
-          <button className="bg-green-500 text-white px-3 py-1 rounded-md text-sm">Nhập mới</button>
+          <button
+            className="bg-green-500 text-white px-3 py-1 rounded-md text-sm"
+            onClick={() => openModal()}
+          >
+            Nhập mới
+          </button>
           <div className="flex-grow"></div>
-          <button className="bg-yellow-500 text-white px-3 py-1 rounded-md text-xs">Xuất Excel</button>
+          <ExportExcelButton data={chemicals} parentComponentName="ChemicalEntry" />
         </div>
       </div>
 
@@ -72,25 +113,26 @@ function ChemicalEntry() {
         </thead>
         <tbody>
           {chemicals.map((chemical, index) => (
-            <tr key={chemical.id} className="border-b">
-              <td className="p-2 text-xs">{index + 1}</td>
-              <td className="p-2 text-xs">{chemical.date}</td>
-              <td className="p-2 text-xs">{chemical.enteredBy}</td>
-              <td className="p-2 text-xs">{chemical.status}</td>
-              <td className="p-2 text-xs">{chemical.chemicalName}</td>
-              <td className="p-2 text-xs">{chemical.batch}</td>
-              <td className="p-2 text-xs">{chemical.quantity}</td>
-              <td className="p-2 text-xs">{chemical.unitPrice}</td>
-              <td className="p-2 text-xs">{chemical.totalPrice}</td>
-              <td className="p-2 text-xs">{chemical.VAT}%</td>
-              <td className="p-2 text-xs">{chemical.warehouse}</td>
-              <td className="p-2 text-xs">{chemical.manufacturer}</td>
-              <td className="p-2 text-xs">{chemical.country}</td>
-              <td className="p-2 flex space-x-2">
-                <button className="text-blue-500">
+            <tr key={chemical._id} className="border-b">
+              <td className="p-2 text-xs border ">{index + 1}</td>
+              <td className="p-2 text-xs border ">{chemical.date}</td>
+              <td className="p-2 text-xs border ">{chemical.enteredBy}</td>
+              <td className="p-2 text-xs border ">{chemical.status}</td>
+              <td className="p-2 text-xs border">{chemical.chemicalName}</td>
+              <td className="p-2 text-xs border">{chemical.batch}</td>
+              <td className="p-2 text-xs border">{chemical.quantity}</td>
+              <td className="p-2 text-xs border">{chemical.unitPrice}</td>
+              <td className="p-2 text-xs border">{chemical.totalPrice}</td>
+              <td className="p-2 text-xs border">{chemical.VAT}%</td>
+              <td className="p-2 text-xs border">{chemical.warehouse}</td>
+              <td className="p-2 text-xs border">{chemical.manufacturer}</td>
+              <td className="p-2 text-xs border">{chemical.country}</td>
+              <td className="p-2 text-center border
+              ">
+                <button className="text-blue-500" onClick={() => openModal(chemical)}>
                   <FaEdit />
                 </button>
-                <button className="text-red-500">
+                <button className="text-red-500" onClick={() => handleDelete(chemical._id)}>
                   <FaTrashAlt />
                 </button>
               </td>
@@ -98,6 +140,28 @@ function ChemicalEntry() {
           ))}
         </tbody>
       </table>
+
+      <DynamicFormModal
+        isOpen={modalOpen}
+        onClose={closeModal}
+        onSave={handleSave}
+        formFields={[
+          { name: 'date', label: 'Ngày nhập', type: 'date' },
+          { name: 'enteredBy', label: 'Người nhập' },
+          { name: 'status', label: 'Trạng thái' },
+          { name: 'chemicalName', label: 'Tên hóa chất' },
+          { name: 'batch', label: 'Số lô' },
+          { name: 'quantity', label: 'Khối lượng' },
+          { name: 'unitPrice', label: 'Quy cách' },
+          { name: 'totalPrice', label: 'Giá tiền' },
+          { name: 'VAT', label: 'VAT', type: 'number' },
+          { name: 'warehouse', label: 'Kho' },
+          { name: 'manufacturer', label: 'Nhà SX' },
+          { name: 'country', label: 'Quốc gia' },
+        ]}
+        contentLabel={selectedChemical ? 'Chỉnh sửa hóa chất' : 'Nhập mới hóa chất'}
+        initialData={selectedChemical}
+      />
     </div>
   );
 }

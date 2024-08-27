@@ -41,19 +41,21 @@ const HelpAndSupportManagement = () => {
     setEmailContent(""); // Reset email content
     setIsEmailModalOpen(true);
   };
-
   const handleEmailSend = async () => {
     if (!selectedRequest) return;
 
     try {
-      // Gọi API để gửi email và cập nhật trạng thái
+      await axios.post("http://localhost:5000/api/support-requests/send-email", {
+        recipientEmail: recipientEmail,
+        subject: "Hướng dẫn giải quyết vấn đề",
+        emailContent: emailContent,
+      });
+
       await axios.put(`http://localhost:5000/api/support-requests/${selectedRequest._id}`, {
         status: "Đã gửi email hướng dẫn",
         emailContent: emailContent,
-        recipientEmail: recipientEmail, // Gửi email đến recipientEmail
       });
 
-      // Cập nhật trạng thái trong state
       const updatedRequests = supportRequests.map((request) =>
         request._id === selectedRequest._id
           ? { ...request, status: "Đã gửi email hướng dẫn" }
@@ -61,7 +63,6 @@ const HelpAndSupportManagement = () => {
       );
       setSupportRequests(updatedRequests);
 
-      // Đóng modal và reset state
       setIsEmailModalOpen(false);
     } catch (error) {
       console.error("Error sending email:", error);
