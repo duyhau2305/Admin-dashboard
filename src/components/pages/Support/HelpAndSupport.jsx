@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import Modal from "react-modal"; // Import React Modal
 import { FaEdit, FaTrash } from "react-icons/fa"; // Import các icon
 
@@ -11,32 +12,53 @@ const HelpAndSupport = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [currentEditIndex, setCurrentEditIndex] = useState(null);
 
-  // Load data from localStorage when component mounts
+  // Load data from API when component mounts
   useEffect(() => {
-    const storedRequests = JSON.parse(localStorage.getItem("supportRequests")) || [];
-    setSupportRequests(storedRequests);
+    const fetchRequests = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/support-requests");
+        setSupportRequests(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchRequests();
   }, []);
 
-  // Update localStorage whenever supportRequests changes
-  useEffect(() => {
-    localStorage.setItem("supportRequests", JSON.stringify(supportRequests));
-  }, [supportRequests]);
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (isEditing && currentEditIndex !== null) {
       // Update the existing request
-      const updatedRequests = supportRequests.map((request, index) =>
-        index === currentEditIndex ? { issue, priority, description } : request
-      );
-      setSupportRequests(updatedRequests);
+      const currentRequest = supportRequests[currentEditIndex];
+      try {
+        const response = await axios.put(`http://localhost:5000/api/support-requests/${currentRequest._id}`, {
+          issue,
+          priority,
+          description,
+        });
+        const updatedRequests = supportRequests.map((request, index) =>
+          index === currentEditIndex ? response.data : request
+        );
+        setSupportRequests(updatedRequests);
+      } catch (error) {
+        console.error("Error updating request:", error);
+      }
       setIsEditing(false);
       setCurrentEditIndex(null);
     } else {
       // Add new request
-      const newRequest = { issue, priority, description };
-      setSupportRequests([...supportRequests, newRequest]);
+      try {
+        const response = await axios.post("http://localhost:5000/api/support-requests", {
+          issue,
+          priority,
+          description,
+        });
+        setSupportRequests([...supportRequests, response.data]);
+      } catch (error) {
+        console.error("Error creating request:", error);
+      }
     }
 
     setIsSuccessModalOpen(true);
@@ -54,9 +76,15 @@ const HelpAndSupport = () => {
     setCurrentEditIndex(index);
   };
 
-  const handleDelete = (index) => {
-    const updatedRequests = supportRequests.filter((_, i) => i !== index);
-    setSupportRequests(updatedRequests);
+  const handleDelete = async (index) => {
+    const requestId = supportRequests[index]._id;
+    try {
+      await axios.delete(`http://localhost:5000/api/support-requests/${requestId}`);
+      const updatedRequests = supportRequests.filter((_, i) => i !== index);
+      setSupportRequests(updatedRequests);
+    } catch (error) {
+      console.error("Error deleting request:", error);
+    }
   };
 
   return (

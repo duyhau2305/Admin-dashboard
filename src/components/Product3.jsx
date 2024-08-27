@@ -11,7 +11,7 @@ import SendEmailModal from '../libs/consts/SendEmailModal';
 const ShiftReportTable = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [currentReport, setCurrentReport] = useState(null);
+  const [currentReport, setCurrentReport] = useState({});
   const [searchQuery, setSearchQuery] = useState('');
   const [shiftReports, setShiftReports] = useState([]);
   const [productionOrders, setProductionOrders] = useState([]);
@@ -43,15 +43,27 @@ const ShiftReportTable = () => {
       label: 'Lệnh sản xuất',
       type: 'select',
       options: productionOrders.map(order => ({ label: order.orderCode, value: order._id })),
-      placeholder: 'Chọn lệnh sản xuất'
+      placeholder: 'Chọn lệnh sản xuất',
+      onChange: (e) => handleOrderChange(e.target.value)
     },
-    { name: 'plannedQty', label: 'Số lượng kế hoạch', placeholder: 'Nhập số lượng kế hoạch', type: 'number' },
+    { name: 'plannedQty', label: 'Số lượng kế hoạch', placeholder: 'Số lượng kế hoạch', type: 'number', readOnly: true },
     { name: 'actualQty', label: 'Số lượng thực tế', placeholder: 'Nhập số lượng thực tế', type: 'number' }
   ];
 
+  const handleOrderChange = (selectedOrderId) => {
+    const selectedOrder = productionOrders.find(order => order._id === selectedOrderId);
+    if (selectedOrder) {
+      setCurrentReport(prevState => ({
+        ...prevState,
+        plannedQty: selectedOrder.quantity,
+        productionOrder: selectedOrderId,
+      }));
+    }
+  };
+
   const handleAddReport = () => {
     setIsEditing(false);
-    setCurrentReport(null);
+    setCurrentReport({});
     setIsModalOpen(true);
   };
 
@@ -115,9 +127,7 @@ const ShiftReportTable = () => {
   };
 
   const handleSendEmail = (emailData) => {
-    // Gửi email với dữ liệu emailData và emailReport
     console.log('Sending email with data:', emailData, emailReport);
-    // Thực hiện gửi email thông qua API hoặc phương thức khác
     toast.success('Email đã được gửi thành công');
   };
 
@@ -170,7 +180,7 @@ const ShiftReportTable = () => {
           {shiftReports.map((report, index) => (
             <tr key={index}>
               <td className="py-2 px-4 border">
-                <FormatDate date={report.date} /> {/* Sử dụng FormatDate để định dạng ngày */}
+                <FormatDate date={report.date} />
               </td>
               <td className="py-2 px-4 border">{report.shift}</td>
               <td className="py-2 px-4 border">{report.shiftLeader}</td>
